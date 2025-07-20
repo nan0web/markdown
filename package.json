@@ -1,0 +1,21 @@
+{
+	"name": "@nanoweb/markdown",
+	"version": "1.0.0",
+	"description": "Markdown parser for nanoweb",
+	"main": "src/index.js",
+	"type": "module",
+	"scripts": {
+		"test": "vitest run"
+	},
+	"keywords": [],
+	"author": "",
+	"license": "ISC",
+	"packageManager": "pnpm@10.11.0",
+	"devDependencies": {
+		"@nanoweb/types": "link:../types",
+		"vitest": "^2.1.9"
+	},
+	"peerDependencies": {
+		"@nanoweb/types": "^1.0.0"
+	}
+}

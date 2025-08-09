@@ -7,7 +7,7 @@ import MDListItem from "./MDListItem.js"
 class MDList extends MDElement {
 	tag = "<ul>"
 	end = "</ul>"
-	mdTag = "-"
+	mdTag = ""
 	mdEnd = "\n"
 	/** @type {boolean} */
 	ordered = false
@@ -23,6 +23,44 @@ class MDList extends MDElement {
 		}
 	}
 
+	/**
+	 * Add an element or raw string to the list.
+	 * @param {MDElement | string} element
+	 */
+	add(element) {
+		if (typeof element === "string") {
+			// Wrap raw strings into a list item element.
+			element = new MDListItem({ content: element })
+		}
+		// Ensure the element is a markdown element before adding.
+		if (!(element instanceof MDElement)) {
+			throw new TypeError("Only markdown elements can be added to a list")
+		}
+		super.add(element)
+	}
+
+	/**
+	 * Render the list as markdown.
+	 * The list container itself does not emit a line; each child item
+	 * renders its own markdown prefix (e.g., “- ” or “1.”).
+	 * @param {object} props
+	 * @param {number} [props.indent=0]
+	 * @param {string} [props.format=".md"]
+	 * @returns {string}
+	 */
+	toString(props = {}) {
+		const {
+			indent = 0,
+			format = ".md",
+		} = props
+		if (".html" === format) {
+			return this.toHTML({ indent })
+		}
+		const childrenLines = this.children.map(child =>
+			child.toString({ indent, format })
+		)
+		return this.mdTag + childrenLines.filter(s => "" !== s).join("") + this.mdEnd
+	}
 	/**
 	 * Parse a list block from markdown.
 	 * @param {string} text

@@ -47,7 +47,7 @@ export class AdGroup extends MDHeading3 {
 /**
  * Extended Markdown parser for campaign/ad group structure.
  */
-export default class ExtendedMarkdown extends Markdown {
+class ExtendedMarkdown extends Markdown {
 	/** @type {(Campaign|AdGroup|MDHeading)[]} */
 	elements
 
@@ -125,3 +125,5 @@ export default class ExtendedMarkdown extends Markdown {
 		return this.elements
 	}
 }
+
+export default ExtendedMarkdown

@@ -106,7 +106,9 @@ export default class Markdown {
 					j++
 				}
 				i = j
-			} else if (parsed && parsed.constructor && (parsed.constructor.name === "MDList" || parsed.constructor.name === "MDTaskList" || parsed.constructor.name === "MDOrderedList")) {
+			} else if (parsed && parsed.constructor &&
+				(["MDList", "MDTaskList", "MDOrderedList"].includes(parsed.constructor.name))
+			) {
 				// Parse consecutive list items into a container
 				const listType = parsed.constructor
 				const ordered = parsed.ordered || false

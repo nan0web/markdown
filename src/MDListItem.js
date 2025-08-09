@@ -6,7 +6,7 @@ import MDElement from "./MDElement.js"
 export default class MDListItem extends MDElement {
 	tag = "<li>"
 	end = "</li>"
-	mdTag = "-"
+	mdTag = "- "
 	mdEnd = "\n"
 
 	static parse(text) {

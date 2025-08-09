@@ -42,5 +42,7 @@ export {
 	MDTable,
 	MDTableRow,
 	MDTableCell,
-	MDTaskList
+	MDTaskList,
 }
+
+export default Markdown

@@ -4,8 +4,8 @@ import MDListItem from "./MDListItem.js"
 /**
  * Ordered list element.
  */
-export default class MDOrderedList extends MDList {
-	mdTag = "1."
+class MDOrderedList extends MDList {
+	mdTag = "1. "
 	mdEnd = "\n"
 
 	constructor(props = {}) {
@@ -39,3 +39,5 @@ export default class MDOrderedList extends MDList {
 		})
 	}
 }
+
+export default MDOrderedList

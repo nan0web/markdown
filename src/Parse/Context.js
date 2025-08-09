@@ -6,15 +6,15 @@ class ParseContext {
 	rows = []
 
 	/**
-	 * @param {object} props
-	 * @param {number} props.i
-	 * @param {string[]} props.rows
+	 * @param {object} input
+	 * @param {number} [input.i]
+	 * @param {string[]} [input.rows]
 	 */
-	constructor(props = {}) {
+	constructor(input = {}) {
 		const {
 			i = 0,
 			rows = []
-		} = props
+		} = input
 		this.i = i
 		this.rows = rows
 	}

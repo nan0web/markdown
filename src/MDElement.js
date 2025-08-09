@@ -1,12 +1,16 @@
+import { ContainerObject } from "@nan0web/types"
+
 /**
  * Base class for markdown elements.
  * @typedef {Object} MDElementProps
  * @property {string} [content]
  * @property {string} [tag]
  * @property {string} [end]
+ * @property {string} [mdTag]
+ * @property {string} [mdEnd]
  * @property {MDElement[]} [children]
  */
-class MDElement {
+class MDElement extends ContainerObject {
 	static TAG_MARKDOWN = ""
 	/** @type {string} */
 	content
@@ -27,29 +31,40 @@ class MDElement {
 		if ("string" === typeof props) {
 			props = { content: props }
 		}
+		super(props)
 		const {
 			content = "",
 			tag = "",
 			end = "",
+			mdTag = "",
+			mdEnd = "",
 			children = []
 		} = props
-		this.content = content
-		this.tag = tag
-		this.end = end
-		this.children = children
+		this.content = String(content)
+		this.tag = String(tag)
+		this.end = String(end)
+		this.mdTag = String(mdTag)
+		this.mdEnd = String(mdEnd)
+		this.children = children.map(child => MDElement.from(child))
 	}
 
-	get recent() {
-		return this.children[this.children.length - 1] || this
+	get empty() {
+		return 0 === this.content.length + this.children.length
 	}
 
+	/**
+	 * @throws
+	 * @param {MDElement} element Element to add.
+	 * @return {MDElement} The added element.
+	 */
 	add(element) {
-		this.children.push(element)
+		if (!(element instanceof MDElement)) {
+			throw new TypeError("Only markdown elements can be added to markdown document")
+		}
+		super.add(element)
+		return element
 	}
 
-	map(callback) {
-		return this.children.map(callback)
-	}
 
 	/**
 	 * Convert element and children to string with indentation.
@@ -66,9 +81,9 @@ class MDElement {
 		if (".html" === format) {
 			return this.toHTML(props)
 		}
-		const contentLine = this.mdTag + this.content + this.mdEnd
+		const contentLine = (this.mdTag ?? "") + this.content + (this.mdEnd ?? "")
 		const childrenLines = this.children.map(child => child.toString({ indent: indent + 2, format }))
-		return [contentLine, ...childrenLines].join("\n")
+		return [contentLine, ...childrenLines].filter(s => "" !== s).join("")
 	}
 
 	/**
@@ -88,12 +103,16 @@ class MDElement {
 	}
 	/**
 	 * Create an element from a props object or string.
-	 * @param {MDElement | object | string} props
+	 * @param {MDElement | object | string} input
 	 * @returns {MDElement}
 	 */
-	static from(props) {
-		if (props instanceof MDElement) return props
-		return new this(props)
+	static from(input) {
+		if (input instanceof MDElement) return input
+		return new this(input)
+	}
+
+	[Symbol.for('nodejs.util.inspect.custom')]() {
+		return this.toString()
 	}
 }
 

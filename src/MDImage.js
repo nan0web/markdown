@@ -3,7 +3,7 @@ import MDElement from "./MDElement.js"
 /**
  * Image element.
  */
-export default class MDImage extends MDElement {
+class MDImage extends MDElement {
 	tag = "<img"
 	mdTag = "!"
 	mdEnd = " "
@@ -37,7 +37,7 @@ export default class MDImage extends MDElement {
 		return " ".repeat(indent) + `${this.tag} src="${this.src}" alt="${this.content}"${this.end}`
 	}
 	static parse(text, context = {}) {
-		const { i = 0, rows = [] } = context
+		let { i = 0, rows = [] } = context
 		const match = text.match(/^!\[(.*?)\]\((.*?)\)$/)
 		if (!match) {
 			return false
@@ -51,3 +51,5 @@ export default class MDImage extends MDElement {
 		})
 	}
 }
+
+export default MDImage

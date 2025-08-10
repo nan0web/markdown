@@ -3,6 +3,7 @@
 	"version": "1.0.0",
 	"description": "Markdown parser for nanoweb",
 	"main": "src/index.js",
+	"types": "types/index.d.ts",
 	"type": "module",
 	"scripts": {
 		"build": "tsc",

@@ -4,7 +4,7 @@ import MDHeading2 from "./MDHeading2.js"
 import MDHeading3 from "./MDHeading3.js"
 
 /**
- * Campaign class extends MDHeading
+ * Campaign class extends MDHeading2
  */
 export class Campaign extends MDHeading2 {
 	/** @type {string} */
@@ -23,7 +23,7 @@ export class Campaign extends MDHeading2 {
 }
 
 /**
- * AdGroup class extends MDHeading
+ * AdGroup class extends MDHeading3
  */
 export class AdGroup extends MDHeading3 {
 	/** @type {string} */
@@ -62,24 +62,26 @@ class ExtendedMarkdown extends Markdown {
 	 * @returns {(Campaign|AdGroup|MDHeading)[]}
 	 */
 	parse(text) {
-		const elements = super.parse(text)
+		// Get raw elements from the base parser.
+		const rootElements = super.parse(text)
 		this.elements = []
 
-		if (!this.children) {
+		if (!rootElements || rootElements.length === 0) {
 			throw new Error("Parsed document has no children")
 		}
 
 		let currentCampaign = null
 		let currentAdGroup = null
 
-		for (let i = 0; i < root.children.length; i++) {
-			const el = root.children[i]
+		for (let i = 0; i < rootElements.length; i++) {
+			const el = rootElements[i]
 			if (!(el instanceof MDHeading)) {
 				this.elements.push(el)
 				continue
 			}
 			const levelMatch = el.tag.match(/h(\d)/)
 			const level = levelMatch ? Number(levelMatch[1]) : 0
+
 			if (level === 2) {
 				currentCampaign = new Campaign({ ...el })
 				this.elements.push(currentCampaign)
@@ -101,7 +103,7 @@ class ExtendedMarkdown extends Markdown {
 					continue
 				}
 				const variableName = el.content.toLowerCase()
-				const next = root.children[i + 1]
+				const next = rootElements[i + 1]
 				if (next && next.constructor.name === "MDCodeBlock") {
 					const lines = next.content.split("\n").map(s => s.trim()).filter(Boolean)
 					if (variableName === "keywords") {
@@ -113,7 +115,7 @@ class ExtendedMarkdown extends Markdown {
 					} else if (variableName === "keywords" && currentCampaign) {
 						currentCampaign.keywords = lines
 					}
-					i++ // skip code block
+					i++ // skip the code block element
 					continue
 				}
 				this.elements.push(el)

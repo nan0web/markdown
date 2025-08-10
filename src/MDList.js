@@ -26,6 +26,7 @@ class MDList extends MDElement {
 	/**
 	 * Add an element or raw string to the list.
 	 * @param {MDElement | string} element
+	 * @returns {this}
 	 */
 	add(element) {
 		if (typeof element === "string") {
@@ -36,7 +37,8 @@ class MDList extends MDElement {
 		if (!(element instanceof MDElement)) {
 			throw new TypeError("Only markdown elements can be added to a list")
 		}
-		super.add(element)
+		// super.add returns the inserted element; we forward that.
+		return super.add(element)
 	}
 
 	/**
@@ -61,13 +63,14 @@ class MDList extends MDElement {
 		)
 		return this.mdTag + childrenLines.filter(s => "" !== s).join("") + this.mdEnd
 	}
+
 	/**
 	 * Parse a list block from markdown.
 	 * @param {string} text
-	 * @param {object} context
+	 * @param {{i:number, rows:string[]}} context
 	 * @returns {MDList|false}
 	 */
-	static parse(text, context = {}) {
+	static parse(text, context = { i: 0, rows: [] }) {
 		const { i = 0, rows = [] } = context
 		const match = text.match(/^(-|\d+\.)\s+(.*)$/)
 		if (!match) {

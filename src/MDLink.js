@@ -12,7 +12,7 @@ class MDLink extends MDElement {
 	/** @type {string} */
 	href
 	/**
-	 * @todo fix jsdoc
+	 * @param {object} props
 	 */
 	constructor(props = {}) {
 		super(props)
@@ -30,18 +30,19 @@ class MDLink extends MDElement {
 	/**
 	 *
 	 * @param {string} text
-	 * @param {{ i: number, rows: string[] }} [context]
-	 * @returns
+	 * @param {{ i:number, rows:string[] }} [context]
+	 * @returns {MDLink|false}
 	 */
-	static parse(text, context = {}) {
-		let { i = 0, rows = [] } = context
+	static parse(text, context = { i: 0, rows: [] }) {
+		const { i = 0, rows = [] } = context
 		const match = text.match(/^\[(.*?)\]\((.*?)\)$/)
 		if (!match) {
 			return false
 		}
 		const content = match[1]
 		const href = match[2]
-		i = i + match[0].length
+		// Update context position (not used elsewhere but keeps parity with other parsers)
+		context.i = i + match[0].length
 		return new MDLink({
 			content,
 			href

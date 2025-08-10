@@ -1,4 +1,5 @@
 import MDElement from "./MDElement.js"
+import MDTableRow from "./MDTableRow.js"
 
 /**
  * Table element.
@@ -12,11 +13,10 @@ export default class MDTable extends MDElement {
 	/**
 	 * Parses markdown table text into MDTable instance.
 	 * @param {string} text - Markdown text to parse
-	 * @param {object} context - Parsing context
+	 * @param {{i?:number, rows?:string[]}} context - Parsing context (unused)
 	 * @returns {MDTable|false} Parsed MDTable instance or false if not a table
 	 */
 	static parse(text, context = {}) {
-		let { i = 0, rows = [] } = context
 		const el = new this()
 		// Normalize text to ensure it ends with newline for mdEnd check
 		const normalizedText = text.endsWith("\n") ? text : text + "\n"
@@ -36,9 +36,9 @@ export default class MDTable extends MDElement {
 			if (!line.trim().startsWith("|") || !line.trim().endsWith("|")) return false
 		}
 
-		// Create instance with content and children as rows
+		// Create instance with content and children as MDTableRow elements.
 		const content = lines.join("\n")
-		const children = lines.map(line => line.trim())
+		const children = lines.map(line => new MDTableRow({ content: line.trim() }))
 
 		return new MDTable({
 			content,

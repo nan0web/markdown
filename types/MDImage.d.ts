@@ -1,7 +1,8 @@
+export default MDImage;
 /**
  * Image element.
  */
-export default class MDImage extends MDElement {
+declare class MDImage extends MDElement {
     static parse(text: any, context?: {}): false | MDImage;
     /**
      * @todo fix jsdoc

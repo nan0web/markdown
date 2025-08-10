@@ -20,7 +20,7 @@ export type MDElementProps = {
  * @property {string} [mdEnd]
  * @property {MDElement[]} [children]
  */
-declare class MDElement {
+declare class MDElement extends ContainerObject {
     static TAG_MARKDOWN: string;
     /**
      * Create an element from a props object or string.
@@ -48,9 +48,9 @@ declare class MDElement {
     /**
      * @throws
      * @param {MDElement} element Element to add.
-     * @return {MDElement} The added element.
+     * @return {this} The current instance.
      */
-    add(element: MDElement): MDElement;
+    add(element: MDElement): this;
     /**
      * Convert element and children to string with indentation.
      * @param {object} props
@@ -72,3 +72,4 @@ declare class MDElement {
         indent?: number | undefined;
     }): string;
 }
+import { ContainerObject } from "@nan0web/types";

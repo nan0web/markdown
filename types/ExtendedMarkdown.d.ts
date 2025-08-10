@@ -1,5 +1,5 @@
 /**
- * Campaign class extends MDHeading
+ * Campaign class extends MDHeading2
  */
 export class Campaign extends MDHeading2 {
     constructor(props?: {});
@@ -11,7 +11,7 @@ export class Campaign extends MDHeading2 {
     adGroups: AdGroup[];
 }
 /**
- * AdGroup class extends MDHeading
+ * AdGroup class extends MDHeading3
  */
 export class AdGroup extends MDHeading3 {
     constructor(props?: {});
@@ -24,10 +24,13 @@ export class AdGroup extends MDHeading3 {
     /** @type {string[]} */
     descriptions: string[];
 }
+export default ExtendedMarkdown;
+import MDHeading2 from "./MDHeading2.js";
+import MDHeading3 from "./MDHeading3.js";
 /**
  * Extended Markdown parser for campaign/ad group structure.
  */
-export default class ExtendedMarkdown extends Markdown {
+declare class ExtendedMarkdown extends Markdown {
     constructor();
     /** @type {(Campaign|AdGroup|MDHeading)[]} */
     elements: (Campaign | AdGroup | MDHeading)[];
@@ -38,7 +41,5 @@ export default class ExtendedMarkdown extends Markdown {
      */
     parse(text: string): (Campaign | AdGroup | MDHeading)[];
 }
-import MDHeading2 from "./MDHeading2.js";
-import MDHeading3 from "./MDHeading3.js";
 import Markdown from "./Markdown.js";
 import MDHeading from "./MDHeading.js";

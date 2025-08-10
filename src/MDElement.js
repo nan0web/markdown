@@ -55,14 +55,14 @@ class MDElement extends ContainerObject {
 	/**
 	 * @throws
 	 * @param {MDElement} element Element to add.
-	 * @return {MDElement} The added element.
+	 * @return {this} The current instance.
 	 */
 	add(element) {
 		if (!(element instanceof MDElement)) {
 			throw new TypeError("Only markdown elements can be added to markdown document")
 		}
 		super.add(element)
-		return element
+		return this
 	}
 
 

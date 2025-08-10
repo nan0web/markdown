@@ -76,15 +76,13 @@ export default class Markdown {
 				continue
 			}
 			let parsed = null
-			let context = new ParseContext({ i, rows: lines })
+			const context = new ParseContext({ i, rows: lines })
 			for (const Element of Markdown.ELEMENTS) {
 				if ("function" !== typeof Element.parse) {
 					throw new Error(`Element ${Element.name} has no static parse() method`)
 				}
 				parsed = Element.parse(line, context)
-				if (parsed) {
-					break
-				}
+				if (parsed) break
 			}
 			if (!parsed) {
 				// fallback to paragraph
@@ -106,12 +104,15 @@ export default class Markdown {
 					j++
 				}
 				i = j
-			} else if (parsed && parsed.constructor &&
-				(["MDList", "MDTaskList", "MDOrderedList"].includes(parsed.constructor.name))
+			} else if (
+				parsed instanceof MDList ||
+				parsed instanceof MDTaskList ||
+				parsed instanceof MDOrderedList
 			) {
 				// Parse consecutive list items into a container
 				const listType = parsed.constructor
-				const ordered = parsed.ordered || false
+				const ordered = !!parsed.ordered
+				// @ts-ignore
 				const list = new listType({ ordered, children: [] })
 				while (i < lines.length) {
 					const itemLine = lines[i]
@@ -137,6 +138,7 @@ export default class Markdown {
 	 * @returns {string}
 	 */
 	stringify(interceptor) {
+		// @ts-ignore MDElement has map from extended ContainerObject
 		const html = this.document.map(el => {
 			if (interceptor) {
 				const intercepted = interceptor(el)
@@ -153,7 +155,14 @@ export default class Markdown {
 	 * @returns {string}
 	 */
 	elementToHTML(el) {
-		if (el instanceof MDHeading1 || el instanceof MDHeading2 || el instanceof MDHeading3 || el instanceof MDHeading4 || el instanceof MDHeading5 || el instanceof MDHeading6) {
+		if (
+			el instanceof MDHeading1 ||
+			el instanceof MDHeading2 ||
+			el instanceof MDHeading3 ||
+			el instanceof MDHeading4 ||
+			el instanceof MDHeading5 ||
+			el instanceof MDHeading6
+		) {
 			return `<${el.tag.slice(1, -1)}>${el.content}</${el.tag.slice(1, -1)}>`
 		}
 		if (el instanceof MDParagraph) {

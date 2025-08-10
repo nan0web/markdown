@@ -4,7 +4,7 @@
  * @link https://www.markdownguide.org/cheat-sheet/
  */
 export default class Markdown {
-    static ELEMENTS: (typeof MDParagraph | typeof MDList)[];
+    static ELEMENTS: (typeof MDParagraph)[];
     constructor(props?: {});
     /** @type {MDElement} */
     document: MDElement;
@@ -29,4 +29,3 @@ export default class Markdown {
 }
 import MDElement from "./MDElement.js";
 import MDParagraph from "./MDParagraph.js";
-import MDList from "./MDList.js";

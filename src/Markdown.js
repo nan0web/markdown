@@ -53,10 +53,14 @@ export default class Markdown {
 	/** @type {MDElement} */
 	document
 
-	constructor(props = {}) {
+	/**
+	 * @param {object} [input]
+	 * @param {MDElement} [input.document]
+	 */
+	constructor(input = {}) {
 		const {
 			document = new MDElement()
-		} = props
+		} = input
 		this.document = document
 	}
 

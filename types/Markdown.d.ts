@@ -5,7 +5,13 @@
  */
 export default class Markdown {
     static ELEMENTS: (typeof MDParagraph)[];
-    constructor(props?: {});
+    /**
+     * @param {object} [input]
+     * @param {MDElement} [input.document]
+     */
+    constructor(input?: {
+        document?: MDElement | undefined;
+    } | undefined);
     /** @type {MDElement} */
     document: MDElement;
     /**

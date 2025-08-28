@@ -20,13 +20,14 @@ import MDTableRow from "./MDTableRow.js"
 import MDTableCell from "./MDTableCell.js"
 import MDTaskList from "./MDTaskList.js"
 import ParseContext from "./Parse/Context.js"
+import InterceptorInput from "./InterceptorInput.js"
 
 /**
  * Markdown parser for nanoweb.
  * Parses markdown to object by new lines.
  * @link https://www.markdownguide.org/cheat-sheet/
  */
-export default class Markdown {
+class Markdown {
 	static ELEMENTS = [
 		MDHeading1,
 		MDHeading2,
@@ -138,19 +139,44 @@ export default class Markdown {
 
 	/**
 	 * Stringify elements to HTML string.
-	 * @param {(element: MDElement) => string | null} [interceptor]
+	 * @param {(element: InterceptorInput) => string | null} [interceptor]
 	 * @returns {string}
 	 */
 	stringify(interceptor) {
 		// @ts-ignore MDElement has map from extended ContainerObject
-		const html = this.document.map(el => {
+		const path = []
+		// @ts-ignore
+		const htmlParts = this.document.map(el => {
 			if (interceptor) {
-				const intercepted = interceptor(el)
+				const input = new InterceptorInput({ element: el, path })
+				const intercepted = interceptor(input)
+				path.push(el)
 				if (typeof intercepted === "string") return intercepted
 			}
 			return el.toHTML()
-		}).join("\n")
-		return html
+		})
+		return htmlParts.join("\n")
+	}
+
+	/**
+	 * Stringify elements to HTML string.
+	 * @param {(element: InterceptorInput) => Promise<string | null>} [interceptor]
+	 * @returns {Promise<string>}
+	 */
+	async asyncStringify(interceptor) {
+		// @ts-ignore MDElement has map from extended ContainerObject
+		const path = []
+		// @ts-ignore
+		const htmlParts = await this.document.asyncMap(async el => {
+			if (interceptor) {
+				const input = new InterceptorInput({ element: el, path })
+				const intercepted = await interceptor(input)
+				path.push(el)
+				if (typeof intercepted === "string") return intercepted
+			}
+			return el.toHTML()
+		})
+		return htmlParts.join("\n")
 	}
 
 	/**
@@ -191,3 +217,5 @@ export default class Markdown {
 		return el.tag + el.content + el.end
 	}
 }
+
+export default Markdown

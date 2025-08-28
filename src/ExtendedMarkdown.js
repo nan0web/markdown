@@ -76,6 +76,7 @@ class ExtendedMarkdown extends Markdown {
 		for (let i = 0; i < rootElements.length; i++) {
 			const el = rootElements[i]
 			if (!(el instanceof MDHeading)) {
+				// @ts-ignore @todo complete the AdGroups
 				this.elements.push(el)
 				continue
 			}

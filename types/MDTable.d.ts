@@ -12,5 +12,9 @@ export default class MDTable extends MDElement {
         i?: number;
         rows?: string[];
     }): MDTable | false;
+    tag: string;
+    end: string;
+    mdTag: string;
+    mdEnd: string;
 }
 import MDElement from "./MDElement.js";

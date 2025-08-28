@@ -14,6 +14,10 @@ declare class MDConfig extends MDElement {
      */
     static from(props: MDConfig | object | string): MDConfig;
     constructor(props?: {});
+    mdTag: string;
+    mdEnd: string;
+    tag: string;
+    end: string;
     /** @type {object} */
     config: object;
     /** @type {Map<number, string>} */

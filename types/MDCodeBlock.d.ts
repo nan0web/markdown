@@ -10,6 +10,14 @@ export default class MDCodeBlock extends MDElement {
      */
     constructor(props?: MDCodeBlockProps & import("./MDElement.js").MDElementProps);
     /** @type {string} */
+    tag: string;
+    /** @type {string | {(el: MDCodeBlock): string}} */
+    mdTag: string | ((el: MDCodeBlock) => string);
+    /** @type {string} */
+    mdEnd: string;
+    /** @type {string} */
+    end: string;
+    /** @type {string} */
     language: string;
     toHTML(props?: {}): string;
 }

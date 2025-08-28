@@ -1,10 +1,11 @@
+export default Markdown;
 /**
  * Markdown parser for nanoweb.
  * Parses markdown to object by new lines.
  * @link https://www.markdownguide.org/cheat-sheet/
  */
-export default class Markdown {
-    static ELEMENTS: (typeof MDParagraph)[];
+declare class Markdown {
+    static ELEMENTS: (typeof MDParagraph | typeof MDCodeBlock)[];
     /**
      * @param {object} [input]
      * @param {MDElement} [input.document]
@@ -22,10 +23,16 @@ export default class Markdown {
     parse(text: string): MDElement[];
     /**
      * Stringify elements to HTML string.
-     * @param {(element: MDElement) => string | null} [interceptor]
+     * @param {(element: InterceptorInput) => string | null} [interceptor]
      * @returns {string}
      */
-    stringify(interceptor?: ((element: MDElement) => string | null) | undefined): string;
+    stringify(interceptor?: ((element: InterceptorInput) => string | null) | undefined): string;
+    /**
+     * Stringify elements to HTML string.
+     * @param {(element: InterceptorInput) => Promise<string | null>} [interceptor]
+     * @returns {Promise<string>}
+     */
+    asyncStringify(interceptor?: ((element: InterceptorInput) => Promise<string | null>) | undefined): Promise<string>;
     /**
      * Convert element to HTML string.
      * @param {MDElement} el
@@ -34,4 +41,6 @@ export default class Markdown {
     elementToHTML(el: MDElement): string;
 }
 import MDElement from "./MDElement.js";
+import InterceptorInput from "./InterceptorInput.js";
 import MDParagraph from "./MDParagraph.js";
+import MDCodeBlock from "./MDCodeBlock.js";

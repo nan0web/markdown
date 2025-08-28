@@ -14,6 +14,10 @@ declare class MDList extends MDElement {
         rows: string[];
     }): MDList | false;
     constructor(props?: {});
+    tag: string;
+    end: string;
+    mdTag: string;
+    mdEnd: string;
     /** @type {boolean} */
     ordered: boolean;
     /**

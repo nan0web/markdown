@@ -18,6 +18,11 @@ declare class MDLink extends MDElement {
      */
     constructor(props?: object);
     /** @type {string} */
+    tag: string;
+    mdTag: string;
+    mdEnd: string;
+    end: string;
+    /** @type {string} */
     href: string;
     toHTML(props?: {}): string;
 }

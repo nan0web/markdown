@@ -8,8 +8,9 @@ import MDElement from "./MDElement.js"
 export default class MDCodeBlock extends MDElement {
 	/** @type {string} */
 	tag = "<pre>"
-	/** @type {string} */
-	mdTag = "```\n"
+	/** @type {string | {(el: MDCodeBlock): string}} */
+	// @ts-ignore MDCodeBlock extends MDElement
+	mdTag = (el) => "```" + el.language + "\n"
 	/** @type {string} */
 	mdEnd = "\n```"
 	/** @type {string} */
@@ -24,7 +25,7 @@ export default class MDCodeBlock extends MDElement {
 		const {
 			language = ""
 		} = props
-		this.language = language
+		this.language = String(language)
 	}
 	toHTML(props = {}) {
 		if (this.language) {

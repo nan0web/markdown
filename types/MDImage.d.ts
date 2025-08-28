@@ -8,6 +8,10 @@ declare class MDImage extends MDElement {
      * @todo fix jsdoc
      */
     constructor(props?: {});
+    tag: string;
+    mdTag: string;
+    mdEnd: string;
+    end: string;
     /** @type {string} */
     src: string;
     toString(props?: {}): string;

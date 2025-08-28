@@ -34,17 +34,68 @@ declare class MDElement extends ContainerObject {
     constructor(props?: MDElementProps);
     /** @type {string} */
     content: string;
-    /** @type {string} */
-    mdTag: string;
-    /** @type {string} */
-    mdEnd: string;
-    /** @type {string} */
-    tag: string;
-    /** @type {string} */
-    end: string;
+    /** @type {string | {(el: MDElement): string}} */
+    mdTag: string | ((el: MDElement) => string);
+    /** @type {string | {(el: MDElement): string}} */
+    mdEnd: string | ((el: MDElement) => string);
+    /** @type {string | {(el: MDElement): string}} */
+    tag: string | ((el: MDElement) => string);
+    /** @type {string | {(el: MDElement): string}} */
+    end: string | ((el: MDElement) => string);
     /** @type {MDElement[]} */
     children: MDElement[];
     get empty(): boolean;
+    /**
+     * Returns the most recent (deepest) container.
+     *
+     * @returns {MDElement}
+     */
+    get recent(): MDElement;
+    /**
+     * Removes the element from the container.
+     * @param {MDElement} element
+     * @returns {this}
+     */
+    remove(element: MDElement): this;
+    /**
+     * Finds an element by filter.
+     *
+     * @param {(v:MDElement) => boolean} filter
+     * @param {boolean} [recursively=false]
+     * @returns {*}
+     */
+    find(filter: (v: MDElement) => boolean, recursively?: boolean | undefined): any;
+    /**
+     * Flattens the tree into an array.
+     *
+     * @returns {MDElement[]}
+     */
+    flat(): MDElement[];
+    toArray(): MDElement[];
+    /**
+     * Filters children.
+     *
+     * @param {(v:MDElement) => boolean} [filter=()=>true]
+     * @param {boolean} [recursively=false]
+     * @returns {MDElement[]}
+     */
+    filter(filter?: ((v: MDElement) => boolean) | undefined, recursively?: boolean | undefined): MDElement[];
+    /**
+     * Maps over children.
+     *
+     * @param {(value: MDElement, index: number, arr: MDElement[]) => any} callback
+     * @param {boolean} [recursively=false]
+     * @returns {Array}
+     */
+    map(callback: (value: MDElement, index: number, arr: MDElement[]) => any, recursively?: boolean | undefined): any[];
+    /**
+     * Asynchronously maps over children.
+     *
+     * @param {(value: MDElement, index: number, arr: MDElement[]) => Promise<any>} callback
+     * @param {boolean} [recursively=false]
+     * @returns {Promise<Array>}
+     */
+    asyncMap(callback: (value: MDElement, index: number, arr: MDElement[]) => Promise<any>, recursively?: boolean | undefined): Promise<any[]>;
     /**
      * @throws
      * @param {MDElement} element Element to add.

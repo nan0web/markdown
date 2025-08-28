@@ -8,4 +8,10 @@ export default class MDHeading extends MDElement {
 	end = "</h1>"
 	mdTag = "# "
 	mdEnd = "\n"
+	/**
+	 * @returns {number}
+	 */
+	get heading() {
+		return this.mdTag.length - 1
+	}
 }

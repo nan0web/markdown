@@ -14,4 +14,12 @@ export default class MDHeading extends MDElement {
 	get heading() {
 		return this.mdTag.length - 1
 	}
+	/**
+	 * @param {object} input
+	 * @returns {MDHeading}
+	 */
+	static from(input) {
+		if (input instanceof MDHeading) return input
+		return new MDHeading(input)
+	}
 }

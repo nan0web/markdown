@@ -16,4 +16,12 @@ export default class MDHeading5 extends MDHeading {
 		}
 		return new MDHeading5({ content: match[1] })
 	}
+	/**
+	 * @param {*} input
+	 * @returns {MDHeading5}
+	 */
+	static from(input) {
+		if (input instanceof MDHeading5) return input
+		return new MDHeading5(input)
+	}
 }

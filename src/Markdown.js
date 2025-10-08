@@ -15,6 +15,7 @@ import MDLink from "./MDLink.js"
 import MDImage from "./MDImage.js"
 import MDBlockquote from "./MDBlockquote.js"
 import MDHorizontalRule from "./MDHorizontalRule.js"
+import MDSpace from "./MDSpace.js"
 import MDTable from "./MDTable.js"
 import MDTableRow from "./MDTableRow.js"
 import MDTableCell from "./MDTableCell.js"
@@ -27,7 +28,7 @@ import InterceptorInput from "./InterceptorInput.js"
  * Parses markdown to object by new lines.
  * @link https://www.markdownguide.org/cheat-sheet/
  */
-class Markdown {
+export default class Markdown {
 	static ELEMENTS = [
 		MDHeading1,
 		MDHeading2,
@@ -49,6 +50,7 @@ class Markdown {
 		MDImage,
 		MDTaskList,
 		MDParagraph,
+		MDSpace,
 	]
 
 	/** @type {MDElement} */
@@ -71,15 +73,21 @@ class Markdown {
 	 * @returns {MDElement[]} - Root element children
 	 */
 	parse(text) {
+		this.document.children = Markdown.parse(text)
+		return this.document.children
+	}
+
+	/**
+	 * Parse markdown text into elements.
+	 * @param {string} text
+	 * @returns {MDElement[]} - Root element children
+	 */
+	static parse(text) {
 		const lines = text.split("\n")
 		const elements = []
 		let i = 0
 		while (i < lines.length) {
 			let line = lines[i]
-			if (line.trim() === "") {
-				i++
-				continue
-			}
 			let parsed = null
 			const context = new ParseContext({ i, rows: lines })
 			for (const Element of Markdown.ELEMENTS) {
@@ -88,10 +96,20 @@ class Markdown {
 				}
 				parsed = Element.parse(line, context)
 				if (parsed) break
+				context.skipped.push(Element)
 			}
 			if (!parsed) {
 				// fallback to paragraph
 				parsed = MDParagraph.parse(line, context)
+				const paragraphLines = []
+				let j = i
+				while (j < lines.length && lines[j].trim() !== "") {
+					paragraphLines.push(lines[j])
+					j++
+				}
+				const paragraphContent = paragraphLines.join("\n")
+				parsed = new MDParagraph({ content: paragraphContent })
+				i = j
 			}
 			// Update i based on parsed element
 			if (parsed && parsed.constructor && parsed.constructor.name === "MDCodeBlock") {
@@ -129,12 +147,12 @@ class Markdown {
 				elements.push(list)
 				continue
 			} else {
-				i++
+				i = context.i === i ? i + 1 : context.i
 			}
 			elements.push(parsed)
 		}
-		this.document.children = elements
 		return elements
+
 	}
 
 	/**
@@ -217,5 +235,3 @@ class Markdown {
 		return el.tag + el.content + el.end
 	}
 }
-
-export default Markdown

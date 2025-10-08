@@ -11,6 +11,7 @@ import MDListItem from "./MDListItem.js"
 import MDCodeBlock from "./MDCodeBlock.js"
 import MDBlockquote from "./MDBlockquote.js"
 import MDHorizontalRule from "./MDHorizontalRule.js"
+import MDSpace from "./MDSpace.js"
 
 describe("Markdown", () => {
 
@@ -26,10 +27,11 @@ describe("Markdown", () => {
 
 	it("Markdown parser should parse paragraphs", () => {
 		const md = new Markdown()
-		const elements = md.parse("This is a paragraph.\n\nAnother paragraph.")
+		const elements = md.parse("This is a \nmultiline paragraph.\n\nAnother paragraph.")
 		assert.strictEqual(elements.length, 2)
 		assert.ok(elements[0] instanceof MDParagraph)
-		assert.strictEqual(elements[0].content, "This is a paragraph.")
+		assert.strictEqual(elements[0].content, "This is a \nmultiline paragraph.")
+		assert.ok(elements[1] instanceof MDParagraph)
 		assert.strictEqual(elements[1].content, "Another paragraph.")
 	})
 
@@ -57,12 +59,14 @@ describe("Markdown", () => {
 
 	it("Markdown parser should parse code block", () => {
 		const md = new Markdown()
-		const elements = md.parse("```js\nconsole.log('hi')\n```")
-		assert.strictEqual(elements.length, 1)
-		const code = elements[0]
+		const input = "# JS code\n```js\nconsole.log('hi')\n```\n\nHello!"
+		const elements = md.parse(input)
+		assert.strictEqual(elements.length, 4)
+		const code = elements[1]
 		assert.ok(code instanceof MDCodeBlock)
 		assert.strictEqual(code.language, "js")
 		assert.strictEqual(code.content, "console.log('hi')")
+		assert.strictEqual(String(md.document), input + "\n\n")
 	})
 
 	it("Markdown parser should parse blockquote", () => {
@@ -79,6 +83,20 @@ describe("Markdown", () => {
 		const elements = md.parse("---")
 		assert.strictEqual(elements.length, 1)
 		assert.ok(elements[0] instanceof MDHorizontalRule)
+	})
+
+	it("Markdown parser should see paragraphs with spaces", () => {
+		const elements = Markdown.parse([
+			"Few rows",
+			"paragraph",
+			"",
+			""
+		].join("\n"))
+		const expected = [
+			new MDParagraph("Few rows\nparagraph"),
+			new MDSpace("\n"),
+		]
+		assert.deepStrictEqual(elements, expected)
 	})
 
 	it("Markdown parser should stringify to html", () => {

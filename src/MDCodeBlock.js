@@ -1,5 +1,7 @@
 import MDElement from "./MDElement.js"
 
+/** @typedef {import("./MDElement.js").MDElementProps} MDElementProps */
+
 /**
  * Code block element.
  * @typedef {Object} MDCodeBlockProps
@@ -12,13 +14,13 @@ export default class MDCodeBlock extends MDElement {
 	// @ts-ignore MDCodeBlock extends MDElement
 	mdTag = (el) => "```" + el.language + "\n"
 	/** @type {string} */
-	mdEnd = "\n```"
+	mdEnd = "\n```\n"
 	/** @type {string} */
 	end = "</pre>"
 	/** @type {string} */
 	language
 	/**
-	 * @param {MDCodeBlockProps & import("./MDElement.js").MDElementProps} props
+	 * @param {MDCodeBlockProps & MDElementProps} props
 	 */
 	constructor(props = {}) {
 		super(props)
@@ -27,6 +29,7 @@ export default class MDCodeBlock extends MDElement {
 		} = props
 		this.language = String(language)
 	}
+
 	toHTML(props = {}) {
 		if (this.language) {
 			return `${this.tag}<code class="language-${this.language}">${this.content}</code>${this.end}`
@@ -34,7 +37,12 @@ export default class MDCodeBlock extends MDElement {
 		return super.toHTML(props)
 	}
 
-	static parse(text, context = {}) {
+	/**
+	 * @param {string} text
+	 * @param {{i?: number, rows?: string[]}} context
+	 * @returns {MDCodeBlock|false}
+	 */
+	static parse(text, context = { i: 0, rows: [] }) {
 		const { i = 0, rows = [] } = context
 		const match = text.match(/^```\s*(.*?)\s*$/)
 		if (!match) {
@@ -42,13 +50,20 @@ export default class MDCodeBlock extends MDElement {
 		}
 		const language = match[1]
 		let j = i + 1
-		for (; j < rows.length; j++) {
-			if (rows[j].startsWith("```")) {
-				break
-			}
+
+		const contentLines = []
+		while (j < rows.length && !rows[j].startsWith("```")) {
+			contentLines.push(rows[j])
+			j++
 		}
-		const content = rows.slice(i + 1, j).join("\n")
-		context.i = j
+
+		if (j >= rows.length) {
+			return false // Missing closing ```
+		}
+
+		const content = contentLines.join("\n")
+
+		context.i = j + 1
 		return new MDCodeBlock({
 			language,
 			content

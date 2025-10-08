@@ -5,9 +5,9 @@ import Markdown from "../Markdown.js"
 
 /**
  * Normalizes markdown text for comparison:
- *   - removes trailing spaces
- *   - removes empty lines
- *   - trims leading/trailing whitespace of the whole document
+ * - removes trailing spaces
+ * - removes empty lines
+ * - trims leading/trailing whitespace of the whole document
  */
 function normalize(md) {
 	return md

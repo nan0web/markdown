@@ -16,6 +16,6 @@ describe("MDCodeBlock", () => {
 
 	it("should stringify proper code block", () => {
 		const code = new MDCodeBlock({ content: "code", language: "js" })
-		assert.strictEqual(String(code), "```js\ncode\n```")
+		assert.strictEqual(String(code), "```js\ncode\n```\n")
 	})
 })

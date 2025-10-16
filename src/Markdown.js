@@ -30,6 +30,7 @@ import InterceptorInput from "./InterceptorInput.js"
  */
 export default class Markdown {
 	static ELEMENTS = [
+		// Block elements
 		MDHeading1,
 		MDHeading2,
 		MDHeading3,
@@ -45,11 +46,13 @@ export default class Markdown {
 		MDTableRow,
 		MDTableCell,
 		MDCodeBlock,
+		MDTaskList,
+		MDParagraph,
+		// Inline elements
 		MDCodeInline,
 		MDLink,
 		MDImage,
-		MDTaskList,
-		MDParagraph,
+		// Space elements
 		MDSpace,
 	]
 
@@ -83,7 +86,7 @@ export default class Markdown {
 	 * @returns {MDElement[]} - Root element children
 	 */
 	static parse(text) {
-		const lines = text.split("\n")
+		const lines = String(text).split("\n")
 		const elements = []
 		let i = 0
 		while (i < lines.length) {
@@ -98,20 +101,6 @@ export default class Markdown {
 				if (parsed) break
 				context.skipped.push(Element)
 			}
-			if (!parsed) {
-				// fallback to paragraph
-				parsed = MDParagraph.parse(line, context)
-				const paragraphLines = []
-				let j = i
-				while (j < lines.length && lines[j].trim() !== "") {
-					paragraphLines.push(lines[j])
-					j++
-				}
-				const paragraphContent = paragraphLines.join("\n")
-				parsed = new MDParagraph({ content: paragraphContent })
-				i = j
-			}
-			// Update i based on parsed element
 			if (parsed && parsed.constructor && parsed.constructor.name === "MDCodeBlock") {
 				// Find end of code block
 				let j = i + 1
@@ -146,14 +135,33 @@ export default class Markdown {
 				}
 				elements.push(list)
 				continue
+			} else if (!parsed) {
+				// fallback to paragraph
+				const paragraphLines = []
+				let j = i
+				while (j < lines.length && lines[j].trim() !== "") {
+					paragraphLines.push(lines[j])
+					j++
+				}
+				const paragraphContent = paragraphLines.join("\n")
+				if (paragraphContent.trim() !== "") {
+					parsed = new MDParagraph({ content: paragraphContent })
+				} else {
+					parsed = new MDSpace({ content: lines[i] + '\n' })
+				}
+				i = j > i ? j : i + 1
 			} else {
 				i = context.i === i ? i + 1 : context.i
 			}
-			elements.push(parsed)
+			if (parsed) {
+				elements.push(parsed)
+			} else {
+				i++
+			}
 		}
 		return elements
-
 	}
+
 
 	/**
 	 * Stringify elements to HTML string.

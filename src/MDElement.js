@@ -139,13 +139,15 @@ class MDElement extends ContainerObject {
 	/**
 	 * Convert element and children to string with indentation.
 	 * @param {object} props
-	 * @param {number} [props.indent=0]
+	 * @param {number} [props.indent=-2]
+	 * @param {string} [props.tab="  "]
 	 * @param {string} [props.format=".md"]
 	 * @returns {string}
 	 */
 	toString(props = {}) {
 		const {
-			indent = 0,
+			indent = -2,
+			tab = "  ",
 			format = ".md",
 		} = props
 		if (".html" === format) {
@@ -154,7 +156,9 @@ class MDElement extends ContainerObject {
 		const mdTag = "function" === typeof this.mdTag ? this.mdTag(this) : this.mdTag
 		const mdEnd = "function" === typeof this.mdEnd ? this.mdEnd(this) : this.mdEnd
 		const contentLine = mdTag + this.content + mdEnd
-		const childrenLines = this.children.map(child => child.toString({ indent: indent + 2, format }))
+		const childrenLines = this.children.map(
+			child => child.toString({ indent: indent + tab.length, format })
+		)
 		return [contentLine, ...childrenLines].filter(s => "" !== s).join("")
 	}
 

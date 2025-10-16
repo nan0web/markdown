@@ -15,14 +15,15 @@
 	},
 	"scripts": {
 		"build": "tsc",
-		"test": "node --test",
 		"clean": "rm -rf .cache/ && rm -rf dist/",
 		"clean:modules": "rm -rf node_modules",
+		"test": "node --test --test-timeout=9999 \"src/**/*.test.js\" | nan0test parse tap --fail",
 		"test:docs": "node --test src/README.md.js",
 		"test:release": "node --test \"releases/**/*.test.js\"",
 		"test:coverage": "node --experimental-test-coverage --test-coverage-include=\"src/**/*.js\" --test-coverage-exclude=\"src/**/*.test.js\" --test \"src/**/*.test.js\"",
 		"test:coverage:collect": "nan0test coverage",
 		"test:status": "nan0test status",
+		"release": "nan0release publish",
 		"precommit": "npm test",
 		"prepush": "npm test",
 		"prepare": "husky",
@@ -33,8 +34,9 @@
 	"license": "ISC",
 	"packageManager": "pnpm@10.11.0",
 	"devDependencies": {
-		"@nan0web/types": "workspace:*",
-		"@nan0web/test": "workspace:*",
+		"@nan0web/release": "^1.0.0",
+		"@nan0web/types": "^1.0.0",
+		"@nan0web/test": "^1.0.0",
 		"husky": "^9.1.7"
 	},
 	"peerDependencies": {

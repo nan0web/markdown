@@ -1,11 +1,16 @@
-export default Markdown;
 /**
  * Markdown parser for nanoweb.
  * Parses markdown to object by new lines.
  * @link https://www.markdownguide.org/cheat-sheet/
  */
-declare class Markdown {
-    static ELEMENTS: (typeof MDParagraph | typeof MDCodeBlock)[];
+export default class Markdown {
+    static ELEMENTS: (typeof MDCodeBlock | typeof MDSpace)[];
+    /**
+     * Parse markdown text into elements.
+     * @param {string} text
+     * @returns {MDElement[]} - Root element children
+     */
+    static parse(text: string): MDElement[];
     /**
      * @param {object} [input]
      * @param {MDElement} [input.document]
@@ -42,5 +47,5 @@ declare class Markdown {
 }
 import MDElement from "./MDElement.js";
 import InterceptorInput from "./InterceptorInput.js";
-import MDParagraph from "./MDParagraph.js";
 import MDCodeBlock from "./MDCodeBlock.js";
+import MDSpace from "./MDSpace.js";

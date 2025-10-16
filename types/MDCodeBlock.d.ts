@@ -1,14 +1,23 @@
+/** @typedef {import("./MDElement.js").MDElementProps} MDElementProps */
 /**
  * Code block element.
  * @typedef {Object} MDCodeBlockProps
  * @property {string} [language]
  */
 export default class MDCodeBlock extends MDElement {
-    static parse(text: any, context?: {}): false | MDCodeBlock;
     /**
-     * @param {MDCodeBlockProps & import("./MDElement.js").MDElementProps} props
+     * @param {string} text
+     * @param {{i?: number, rows?: string[]}} context
+     * @returns {MDCodeBlock|false}
      */
-    constructor(props?: MDCodeBlockProps & import("./MDElement.js").MDElementProps);
+    static parse(text: string, context?: {
+        i?: number | undefined;
+        rows?: string[] | undefined;
+    }): MDCodeBlock | false;
+    /**
+     * @param {MDCodeBlockProps & MDElementProps} props
+     */
+    constructor(props?: MDCodeBlockProps & MDElementProps);
     /** @type {string} */
     tag: string;
     /** @type {string | {(el: MDCodeBlock): string}} */
@@ -21,6 +30,7 @@ export default class MDCodeBlock extends MDElement {
     language: string;
     toHTML(props?: {}): string;
 }
+export type MDElementProps = import("./MDElement.js").MDElementProps;
 /**
  * Code block element.
  */

@@ -9,13 +9,14 @@ import MDOrderedList from "./MDOrderedList.js"
 import MDList from "./MDList.js"
 import MDListItem from "./MDListItem.js"
 import MDCodeBlock from "./MDCodeBlock.js"
+import MDCodeInline from "./MDCodeInline.js"
 import MDBlockquote from "./MDBlockquote.js"
 import MDHorizontalRule from "./MDHorizontalRule.js"
 import MDSpace from "./MDSpace.js"
 
 describe("Markdown", () => {
 
-	it("Markdown parser should parse headings", () => {
+	it("should parse headings", () => {
 		const md = new Markdown()
 		const elements = md.parse("# Heading 1\n## Heading 2\n### Heading 3")
 		assert.strictEqual(elements.length, 3)
@@ -25,7 +26,7 @@ describe("Markdown", () => {
 		assert.ok(elements[2] instanceof MDHeading3)
 	})
 
-	it("Markdown parser should parse paragraphs", () => {
+	it("should parse paragraphs", () => {
 		const md = new Markdown()
 		const elements = md.parse("This is a \nmultiline paragraph.\n\nAnother paragraph.")
 		assert.strictEqual(elements.length, 2)
@@ -35,7 +36,7 @@ describe("Markdown", () => {
 		assert.strictEqual(elements[1].content, "Another paragraph.")
 	})
 
-	it("Markdown parser should parse ordered list", () => {
+	it("should parse ordered list", () => {
 		const md = new Markdown()
 		const elements = md.parse("1. first\n2. second\n3. third")
 		assert.strictEqual(elements.length, 1)
@@ -46,7 +47,7 @@ describe("Markdown", () => {
 		assert.strictEqual(list.children[1].content, "second")
 	})
 
-	it("Markdown parser should parse unordered list", () => {
+	it("should parse unordered list", () => {
 		const md = new Markdown()
 		const elements = md.parse("- item 1\n- item 2\n- item 3")
 		assert.strictEqual(elements.length, 1)
@@ -57,19 +58,19 @@ describe("Markdown", () => {
 		assert.strictEqual(list.children[0].content, "item 1")
 	})
 
-	it("Markdown parser should parse code block", () => {
+	it("should parse code block", () => {
 		const md = new Markdown()
-		const input = "# JS code\n```js\nconsole.log('hi')\n```\n\nHello!"
+		const input = "# JS code\n```js\nconsole.log('hi')\n```\nHello!\n\n"
 		const elements = md.parse(input)
-		assert.strictEqual(elements.length, 4)
+		assert.strictEqual(elements.length, 3)
 		const code = elements[1]
 		assert.ok(code instanceof MDCodeBlock)
 		assert.strictEqual(code.language, "js")
 		assert.strictEqual(code.content, "console.log('hi')")
-		assert.strictEqual(String(md.document), input + "\n\n")
+		assert.strictEqual(String(md.document), input)
 	})
 
-	it("Markdown parser should parse blockquote", () => {
+	it("should parse blockquote", () => {
 		const md = new Markdown()
 		const elements = md.parse("> quote line 1\n> quote line 2")
 		assert.strictEqual(elements.length, 1)
@@ -78,14 +79,14 @@ describe("Markdown", () => {
 		assert.strictEqual(bq.content, "quote line 1\nquote line 2")
 	})
 
-	it("Markdown parser should parse horizontal rule", () => {
+	it("should parse horizontal rule", () => {
 		const md = new Markdown()
 		const elements = md.parse("---")
 		assert.strictEqual(elements.length, 1)
 		assert.ok(elements[0] instanceof MDHorizontalRule)
 	})
 
-	it("Markdown parser should see paragraphs with spaces", () => {
+	it("should see paragraphs with spaces", () => {
 		const elements = Markdown.parse([
 			"Few rows",
 			"paragraph",
@@ -93,13 +94,12 @@ describe("Markdown", () => {
 			""
 		].join("\n"))
 		const expected = [
-			new MDParagraph("Few rows\nparagraph"),
-			new MDSpace("\n"),
+			new MDParagraph({ content: "Few rows\nparagraph" }),
 		]
 		assert.deepStrictEqual(elements, expected)
 	})
 
-	it("Markdown parser should stringify to html", () => {
+	it("should stringify to html", () => {
 		const md = new Markdown()
 		md.parse("# Title\n\nParagraph\n\n1. first\n2. second\n\n```js\ncode\n```")
 		const html = md.stringify()
@@ -109,7 +109,7 @@ describe("Markdown", () => {
 		assert.ok(html.includes("<pre><code class=\"language-js\">code</code></pre>"))
 	})
 
-	it("Markdown parser should allow interceptor in stringify", () => {
+	it("should allow interceptor in stringify", () => {
 		const md = new Markdown()
 		md.parse("# Title")
 		const html = md.stringify(({ element }) => {
@@ -121,7 +121,7 @@ describe("Markdown", () => {
 		assert.strictEqual(html, '<h1 class="custom">Title</h1>')
 	})
 
-	it("Markdown parser should allow interceptor in async stringify", async () => {
+	it("should allow interceptor in async stringify", async () => {
 		const md = new Markdown()
 		md.parse("# Title")
 		const html = await md.asyncStringify(async ({ element }) => {
@@ -131,5 +131,74 @@ describe("Markdown", () => {
 			return null
 		})
 		assert.strictEqual(html, '<h1 class="custom">Title</h1>')
+	})
+
+	it("should properly parse new lines", () => {
+		const input = [
+			"Check this document:",
+			"- [Index](index.txt)",
+			"- [README.md](README.md)",
+			"- [+**/*.test.js; -*/test.js](src/**/*.js)",
+			"- [](package.json)",
+		]
+		const elements = Markdown.parse(input.join("\n"))
+		assert.deepStrictEqual(elements.map(String), [
+			"Check this document:\n\n",
+			"- [Index](index.txt)\n" +
+			"- [README.md](README.md)\n" +
+			"- [+**/*.test.js; -*/test.js](src/**/*.js)\n" +
+			"- [](package.json)\n\n",
+		])
+	})
+
+	it("should properly parse inline code", () => {
+		const input = [
+			"`DB.path.test.js` is a test suite from the base `DB` class.",
+			"I think it should be covered the same way.",
+			"",
+			"Your thoughts?",
+			"",
+			"#."
+		].join("\n")
+		const elements = Markdown.parse(input)
+		assert.strictEqual(elements.length, 3)
+		assert.ok(elements[0] instanceof MDParagraph)
+		assert.ok(elements[0].content.includes("DB.path.test.js"))
+		assert.ok(elements[0].content.includes("DB"))
+		assert.ok(elements[1] instanceof MDParagraph)
+		assert.strictEqual(elements[1].content, "Your thoughts?")
+		assert.ok(elements[2] instanceof MDParagraph)
+	})
+
+	it("should properly stringify inline code within paragraphs", () => {
+		const paragraph = new MDParagraph({
+			content: "`DB.path.test.js` is a test suite from the base `DB` class.\nI think it should be covered the same way."
+		})
+		const stringified = paragraph.toString()
+		assert.ok(stringified.includes("`DB.path.test.js` is a test suite from the base `DB` class."))
+		assert.ok(stringified.includes("I think it should be covered the same way."))
+	})
+
+	it("should properly parse and stringify complex inline elements", () => {
+		const input = "This paragraph contains `inline code` and also [links](https://example.com)."
+		const elements = Markdown.parse(input)
+		assert.strictEqual(elements.length, 1)
+		assert.ok(elements[0] instanceof MDParagraph)
+		const output = elements[0].toString()
+		assert.ok(output.includes("`inline code`"))
+	})
+
+	it("should properly parse paragraphs with no spaces", () => {
+		const input = [
+			"This is a paragraph with double new line ending", "", "",
+			"This is a second paragraph", "", "",
+			"3rd is without So in resut it is p + p + p"
+		]
+		const elements = Markdown.parse(input.join("\n"))
+		assert.deepStrictEqual(elements, [
+			new MDParagraph({ content: input[0] }),
+			new MDParagraph({ content: input[3] }),
+			new MDParagraph({ content: input[6] }),
+		])
 	})
 })

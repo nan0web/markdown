@@ -13,14 +13,17 @@ export default class MDCodeInline extends MDElement {
 	/** @type {string} */
 	end = "</code>"
 
+	/**
+	 * @param {string} text
+	 * @param {object} context
+	 * @returns {MDCodeInline|false}
+	 */
 	static parse(text, context = {}) {
-		const { i = 0 } = context
-		const match = text.match(/^`(.*?)`/)
+		const match = text.match(/`([^`]*)`/)
 		if (!match) {
 			return false
 		}
 		const content = match[1]
-		context.i = i + match[0].length
 		return new MDCodeInline({ content })
 	}
 }

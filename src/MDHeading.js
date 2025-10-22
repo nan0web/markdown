@@ -23,9 +23,9 @@ export default class MDHeading extends MDElement {
 
 	/**
 	 *
-	 * @param {import("./MDElement.js").MDElementProps & MDHeadingProps} props
+	 * @param {import("./MDElement.js").MDElementProps & MDHeadingProps} [props]
 	 */
-	constructor(props) {
+	constructor(props = {}) {
 		super(props)
 		let {
 			heading = 0

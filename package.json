@@ -5,6 +5,11 @@
 	"main": "src/index.js",
 	"types": "types/index.d.ts",
 	"type": "module",
+	"files": [
+		"src/**/*.js",
+		"!src/**/*.test.js",
+		"types/**/*.d.ts"
+	],
 	"exports": {
 		".": {
 			"import": "./src/index.js",
@@ -28,7 +33,7 @@
 		"precommit": "npm test",
 		"prepush": "npm test",
 		"prepare": "husky",
-		"playground": "node playground/main.js"
+		"play": "node play/main.js"
 	},
 	"keywords": [],
 	"author": "",
@@ -38,6 +43,7 @@
 		"@nan0web/release": "^1.0.0",
 		"@nan0web/types": "^1.0.0",
 		"@nan0web/test": "^1.0.0",
+		"@nan0web/ui-cli": "^1.0.0",
 		"husky": "^9.1.7"
 	},
 	"peerDependencies": {

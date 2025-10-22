@@ -31,5 +31,6 @@ describe("MDHeading", () => {
 	it("should convert to HTML string properly", () => {
 		const heading = new MDHeading({ content: "Sample Heading" })
 		assert.strictEqual(heading.toHTML(), "<h1>Sample Heading</h1>")
+		assert.strictEqual(heading.toString(), "# Sample Heading\n")
 	})
 })

@@ -4,18 +4,22 @@ import { ContainerObject } from "@nan0web/types"
  * Base class for markdown elements.
  * @typedef {Object} MDElementProps
  * @property {string} [content]
- * @property {string} [tag]
- * @property {string} [end]
- * @property {string} [mdTag]
- * @property {string} [mdEnd]
+ * @property {string|Function} [tag]
+ * @property {string|Function} [end]
+ * @property {string|Function} [mdTag]
+ * @property {string|Function} [mdEnd]
  * @property {MDElement[]} [children]
  */
 export default class MDElement extends ContainerObject {
 	static TAG_MARKDOWN = ""
-	static get defaultMdTag() { return "" }
-	static get defaultMdEnd() { return "" }
-	static get defaultTag() { return "" }
-	static get defaultEnd() { return "" }
+	/** @type {string|Function} */
+	static defaultMdTag = ""
+	/** @type {string|Function} */
+	static defaultMdEnd = ""
+	/** @type {string|Function} */
+	static defaultTag = ""
+	/** @type {string|Function} */
+	static defaultEnd = ""
 
 	/** @type {string} */
 	content
@@ -173,8 +177,8 @@ export default class MDElement extends ContainerObject {
 		if (".txt" === format) {
 			return this.toTEXT(props)
 		}
-		const mdTag = "function" === typeof this.mdTag ? this.mdTag : this.mdTag
-		const mdEnd = "function" === typeof this.mdEnd ? this.mdEnd : this.mdEnd
+		const mdTag = "function" === typeof this.mdTag ? this.mdTag : () => this.mdTag
+		const mdEnd = "function" === typeof this.mdEnd ? this.mdEnd : () => this.mdEnd
 		const contentLine = (typeof mdTag === "function" ? mdTag(this) : mdTag) + this.content + (typeof mdEnd === "function" ? mdEnd(this) : mdEnd)
 		const childrenLines = this.children.map(
 			child => child.toString({ indent: indent + tab.length, format })
@@ -193,8 +197,8 @@ export default class MDElement extends ContainerObject {
 			indent = 0,
 		} = props
 		const indentStr = " ".repeat(indent)
-		const tag = "function" === typeof this.tag ? this.tag : this.tag
-		const end = "function" === typeof this.end ? this.end : this.end
+		const tag = "function" === typeof this.tag ? this.tag : () => this.tag
+		const end = "function" === typeof this.end ? this.end : () => this.end
 		const contentLine = indentStr + (typeof tag === "function" ? tag(this) : tag) + this.content + (typeof end === "function" ? end(this) : end)
 		const childrenLines = this.children.map(child => child.toHTML({ indent: indent + 2 }))
 		return [contentLine, ...childrenLines].join("\n")

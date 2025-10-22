@@ -3,15 +3,17 @@ import MDElement from "./MDElement.js"
 /**
  * Image element.
  */
-class MDImage extends MDElement {
-	tag = "<img"
-	mdTag = "!"
-	mdEnd = " "
-	end = ">"
+export default class MDImage extends MDElement {
+	static get defaultTag() { return "<img" }
+	static get defaultMdTag() { return "!" }
+	static get defaultMdEnd() { return " " }
+	static get defaultEnd() { return ">" }
+
 	/** @type {string} */
 	src
+
 	/**
-	 * @todo fix jsdoc
+	 * @param {object} props
 	 */
 	constructor(props = {}) {
 		super(props)
@@ -20,6 +22,7 @@ class MDImage extends MDElement {
 		} = props
 		this.src = src
 	}
+
 	toString(props = {}) {
 		const {
 			indent = 0,
@@ -30,12 +33,14 @@ class MDImage extends MDElement {
 		}
 		return " ".repeat(indent) + `${this.mdTag}[${this.content}](${this.src})${this.mdEnd}`
 	}
+
 	toHTML(props = {}) {
 		const {
 			indent = 0,
 		} = props
 		return " ".repeat(indent) + `${this.tag} src="${this.src}" alt="${this.content}"${this.end}`
 	}
+
 	static parse(text, context = {}) {
 		let { i = 0, rows = [] } = context
 		const match = text.match(/^!\[(.*?)\]\((.*?)\)$/)
@@ -51,5 +56,3 @@ class MDImage extends MDElement {
 		})
 	}
 }
-
-export default MDImage

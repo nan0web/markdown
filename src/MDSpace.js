@@ -4,10 +4,6 @@ import MDElement from "./MDElement.js"
  * Space element for representing empty lines or whitespace blocks.
  */
 export default class MDSpace extends MDElement {
-	tag = ""
-	end = ""
-	mdTag = ""
-	mdEnd = ""
 
 	constructor(props = {}) {
 		super(props)

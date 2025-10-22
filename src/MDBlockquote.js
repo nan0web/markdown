@@ -4,14 +4,22 @@ import MDElement from "./MDElement.js"
  * Blockquote element.
  */
 export default class MDBlockquote extends MDElement {
-	/** @type {string} */
-	tag = "<blockquote>"
-	/** @type {string} */
-	mdTag = ">"
-	/** @type {string} */
-	mdEnd = "\n"
-	/** @type {string} */
-	end = "</blockquote>"
+	static get defaultTag() { return "<blockquote>" }
+	static get defaultEnd() { return "</blockquote>" }
+	static get defaultMdTag() { return ">" }
+	static get defaultMdEnd() { return "\n" }
+
+	toString(props = {}) {
+		const {
+			indent = 0,
+			format = ".md",
+		} = props
+		if (".html" === format) {
+			return this.toHTML(props)
+		}
+		// Add space after > for proper markdown formatting
+		return this.content.split("\n").map(line => "> " + line).join("\n") + this.mdEnd
+	}
 
 	static parse(text, context = {}) {
 		let { i = 0, rows = [] } = context
@@ -25,13 +33,14 @@ export default class MDBlockquote extends MDElement {
 				if (rows[j].startsWith(">")) {
 					continue
 				}
-				i = j
+				context.i = j
 				return new MDBlockquote({
 					content: rows.slice(i, j).map(
 						row => row.slice(1).trim()
 					).join("\n")
 				})
 			}
+			context.i = j
 			return new MDBlockquote({
 				content: rows.slice(i, j).map(
 					row => row.slice(1).trim()

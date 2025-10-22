@@ -23,6 +23,7 @@
 		"test:coverage": "node --experimental-test-coverage --test-coverage-include=\"src/**/*.js\" --test-coverage-exclude=\"src/**/*.test.js\" --test \"src/**/*.test.js\"",
 		"test:coverage:collect": "nan0test coverage",
 		"test:status": "nan0test status",
+		"test:all": "echo '```bash\n' > me.md && npm run test >> me.md 2>&1 && echo '```\n\n```bash\n` >> me.md && npm run build >> me.md 2>&1 && echo '```\n'",
 		"release": "nan0release publish",
 		"precommit": "npm test",
 		"prepush": "npm test",

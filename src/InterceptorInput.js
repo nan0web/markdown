@@ -1,6 +1,6 @@
 import MDElement from "./MDElement.js"
 
-class InterceptorInput {
+export default class InterceptorInput {
 	/** @type {MDElement} */
 	element
 	/** @type {MDElement[]} */
@@ -20,5 +20,3 @@ class InterceptorInput {
 		this.path = path
 	}
 }
-
-export default InterceptorInput

@@ -1,14 +1,19 @@
 import MDHeading from "./MDHeading.js"
 
 /**
- * Heading element.
+ * Heading2 element.
  */
 export default class MDHeading2 extends MDHeading {
-	tag = "<h2>"
-	end = "</h2>"
-	mdTag = "## "
-	mdEnd = "\n"
+	static get defaultTag() { return "<h2>" }
+	static get defaultEnd() { return "</h2>" }
+	static get defaultMdTag() { return "## " }
+	static get defaultMdEnd() { return "\n" }
 
+	/**
+	 * Parses a heading2 from markdown text.
+	 * @param {string} text
+	 * @returns {MDHeading2|false}
+	 */
 	static parse(text) {
 		const match = text.match(/^##\s+(.*)$/)
 		if (!match) {
@@ -16,6 +21,7 @@ export default class MDHeading2 extends MDHeading {
 		}
 		return new MDHeading2({ content: match[1] })
 	}
+
 	/**
 	 * @param {*} input
 	 * @returns {MDHeading2}

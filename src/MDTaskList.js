@@ -4,14 +4,17 @@ import MDListItem from "./MDListItem.js"
 /**
  * Task list element.
  */
-class MDTaskList extends MDList {
-	mdTag = "[ ] "
-	mdEnd = " "
-	end = ""
+export default class MDTaskList extends MDList {
+	static get defaultMdTag() { return "[ ] " }
+	static get defaultMdEnd() { return " " }
+	static get defaultEnd() { return "" }
 
 	constructor(props = {}) {
 		super(props)
 		this.end = ""
+		this.tag = "<ul>"
+		this.mdTag = "[ ] "
+		this.mdEnd = " "
 	}
 
 	/**
@@ -35,10 +38,23 @@ class MDTaskList extends MDList {
 			children.push(new MDListItem({ content: row.slice(6) }))
 			j++
 		}
+		context.i = j
 		return new MDTaskList({
 			children
 		})
 	}
-}
 
-export default MDTaskList
+	toString(props = {}) {
+		const {
+			indent = 0,
+			format = ".md",
+		} = props
+		if (".html" === format) {
+			return this.toHTML({ indent })
+		}
+		// Fix string representation to return proper task list format
+		return " ".repeat(indent) + this.mdTag + this.children.map(
+			child => child.toString({ indent: 0, format })
+		).join("") + this.mdEnd
+	}
+}

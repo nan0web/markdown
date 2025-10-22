@@ -5,9 +5,9 @@ import MDListItem from "./MDListItem.js"
  * Ordered list element – implements its own logic instead of extending MDList
  * to avoid circular import issues.
  */
-class MDOrderedList extends MDList {
-	mdTag = "1. "
-	mdEnd = "\n"
+export default class MDOrderedList extends MDList {
+	static get defaultMdTag() { return "1. " }
+	static get defaultMdEnd() { return "\n" }
 
 	constructor(props = {}) {
 		// Force ordered flag for the parent class.
@@ -41,5 +41,3 @@ MDOrderedList.parse = function (text, context = { i: 0, rows: [] }) {
 		children
 	})
 }
-
-export default MDOrderedList

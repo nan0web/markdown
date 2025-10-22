@@ -5,13 +5,13 @@ import MDElement from "./MDElement.js"
  */
 export default class MDCodeInline extends MDElement {
 	/** @type {string} */
-	tag = "<code>"
+	static get defaultTag() { return "<code>" }
 	/** @type {string} */
-	mdTag = "`"
+	static get defaultMdTag() { return "`" }
 	/** @type {string} */
-	mdEnd = "`"
+	static get defaultMdEnd() { return "`" }
 	/** @type {string} */
-	end = "</code>"
+	static get defaultEnd() { return "</code>" }
 
 	/**
 	 * @param {string} text

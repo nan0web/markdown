@@ -12,6 +12,7 @@ describe("MDCodeBlock", () => {
 	it("should create with language", () => {
 		const code = new MDCodeBlock({ content: "code", tag: "<pre>", end: "</pre>", language: "js" })
 		assert.strictEqual(code.language, "js")
+		assert.strictEqual(String(code), "```js\ncode\n```\n")
 	})
 
 	it("should stringify proper code block", () => {

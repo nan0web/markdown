@@ -55,4 +55,23 @@ suite('MDConfig', () => {
 			})
 		}
 	})
+	
+	it("should handle config with nested structure", () => {
+		const input = [
+			"---",
+			"name: Test Config",
+			"version: 1.0.0",
+			"# This is a comment",
+			"enabled: true",
+			"---"
+		].join("\n")
+		const context = new ParseContext({ i: 0, rows: input.split('\n') })
+		const result = MDConfig.parse(input, context)
+		assert.ok(result instanceof MDConfig)
+		assert.strictEqual(result.config.name, 'Test Config')
+		assert.strictEqual(result.config.version, '1.0.0')
+		assert.strictEqual(result.config.enabled, 'true')
+		assert.ok(result.$comments.has(3))
+		assert.strictEqual(result.$comments.get(3), 'This is a comment')
+	})
 })

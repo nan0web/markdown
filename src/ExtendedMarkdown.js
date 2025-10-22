@@ -2,6 +2,7 @@ import Markdown from "./Markdown.js"
 import MDHeading from "./MDHeading.js"
 import MDHeading2 from "./MDHeading2.js"
 import MDHeading3 from "./MDHeading3.js"
+import MDCodeBlock from "./MDCodeBlock.js"
 
 /**
  * Campaign class extends MDHeading2
@@ -14,6 +15,9 @@ export class Campaign extends MDHeading2 {
 	/** @type {AdGroup[]} */
 	adGroups
 
+	/**
+	 * @param {object} props
+	 */
 	constructor(props = {}) {
 		super(props)
 		this.name = this.content
@@ -35,6 +39,9 @@ export class AdGroup extends MDHeading3 {
 	/** @type {string[]} */
 	descriptions
 
+	/**
+	 * @param {object} props
+	 */
 	constructor(props = {}) {
 		super(props)
 		this.name = this.content
@@ -76,36 +83,39 @@ class ExtendedMarkdown extends Markdown {
 		for (let i = 0; i < rootElements.length; i++) {
 			const el = rootElements[i]
 			if (!(el instanceof MDHeading)) {
-				// @ts-ignore @todo complete the AdGroups
-				this.elements.push(el)
+				this.elements.push(/** @type {any} */(el))
 				continue
 			}
-			const levelMatch = el.tag.match(/h(\d)/)
-			const level = levelMatch ? Number(levelMatch[1]) : 0
+
+			// Determine heading level by counting # characters
+			const tag = typeof el.mdTag === "function" ? el.mdTag : el.mdTag
+			const tagString = typeof tag === "function" ? tag(el) : String(tag)
+			const level = tagString.split("#").length - 1
 
 			if (level === 2) {
-				currentCampaign = new Campaign({ ...el })
+				currentCampaign = new Campaign({ content: el.content, tag: el.tag, end: el.end, mdTag: el.mdTag, mdEnd: el.mdEnd })
 				this.elements.push(currentCampaign)
 				currentAdGroup = null
 				continue
 			}
 			if (level === 3) {
 				if (!currentCampaign) {
-					this.elements.push(el)
+					this.elements.push(/** @type {any} */(el))
 					continue
 				}
-				currentAdGroup = new AdGroup({ ...el })
+				currentAdGroup = new AdGroup({ content: el.content, tag: el.tag, end: el.end, mdTag: el.mdTag, mdEnd: el.mdEnd })
+				currentCampaign.adGroups.push(currentAdGroup)
 				this.elements.push(currentAdGroup)
 				continue
 			}
 			if (level === 4) {
 				if (!currentAdGroup) {
-					this.elements.push(el)
+					this.elements.push(/** @type {any} */(el))
 					continue
 				}
 				const variableName = el.content.toLowerCase()
 				const next = rootElements[i + 1]
-				if (next && next.constructor.name === "MDCodeBlock") {
+				if (next && next instanceof MDCodeBlock) {
 					const lines = next.content.split("\n").map(s => s.trim()).filter(Boolean)
 					if (variableName === "keywords") {
 						currentAdGroup.keywords = lines
@@ -113,16 +123,14 @@ class ExtendedMarkdown extends Markdown {
 						currentAdGroup.headlines = lines
 					} else if (variableName === "descriptions") {
 						currentAdGroup.descriptions = lines
-					} else if (variableName === "keywords" && currentCampaign) {
-						currentCampaign.keywords = lines
 					}
 					i++ // skip the code block element
 					continue
 				}
-				this.elements.push(el)
+				this.elements.push(/** @type {any} */(el))
 				continue
 			}
-			this.elements.push(el)
+			this.elements.push(/** @type {any} */(el))
 		}
 
 		return this.elements

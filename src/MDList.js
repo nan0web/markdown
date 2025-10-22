@@ -4,11 +4,12 @@ import MDListItem from "./MDListItem.js"
 /**
  * List element.
  */
-class MDList extends MDElement {
-	tag = "<ul>"
-	end = "</ul>"
-	mdTag = ""
-	mdEnd = "\n"
+export default class MDList extends MDElement {
+	static get defaultTag() { return "<ul>" }
+	static get defaultEnd() { return "</ul>" }
+	static get defaultMdTag() { return "" }
+	static get defaultMdEnd() { return "\n" }
+
 	/** @type {boolean} */
 	ordered = false
 
@@ -44,7 +45,7 @@ class MDList extends MDElement {
 	/**
 	 * Render the list as markdown.
 	 * The list container itself does not emit a line; each child item
-	 * renders its own markdown prefix (e.g., “- ” or “1.”).
+	 * renders its own markdown prefix (e.g., "- " or "1.").
 	 * @param {object} props
 	 * @param {number} [props.indent=0]
 	 * @param {string} [props.format=".md"]
@@ -93,5 +94,3 @@ class MDList extends MDElement {
 		})
 	}
 }
-
-export default MDList

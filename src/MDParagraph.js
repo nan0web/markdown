@@ -6,10 +6,10 @@ import MDCodeInline from "./MDCodeInline.js"
  * Paragraph element.
  */
 export default class MDParagraph extends MDElement {
-	tag = "<p>"
-	end = "</p>"
-	mdTag = ""
-	mdEnd = "\n\n"
+	static get defaultTag() { return "<p>" }
+	static get defaultEnd() { return "</p>" }
+	static get defaultMdTag() { return "" }
+	static get defaultMdEnd() { return "\n\n" }
 
 	/**
 	 * @param {string} text

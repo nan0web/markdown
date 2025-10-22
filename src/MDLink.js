@@ -3,14 +3,16 @@ import MDElement from "./MDElement.js"
 /**
  * Link element.
  */
-class MDLink extends MDElement {
+export default class MDLink extends MDElement {
 	/** @type {string} */
-	tag = "<a"
-	mdTag = "["
-	mdEnd = "]("
-	end = "</a>"
+	static get defaultTag() { return "<a" }
+	static get defaultMdTag() { return "[" }
+	static get defaultMdEnd() { return "](" }
+	static get defaultEnd() { return "</a>" }
+
 	/** @type {string} */
 	href
+
 	/**
 	 * @param {object} props
 	 */
@@ -21,12 +23,25 @@ class MDLink extends MDElement {
 		} = props
 		this.href = href
 	}
+
 	toHTML(props = {}) {
 		const {
 			indent = 0,
 		} = props
 		return " ".repeat(indent) + `${this.tag} href="${this.href}">${this.content}${this.end}`
 	}
+
+	toString(props = {}) {
+		const {
+			indent = 0,
+			format = ".md",
+		} = props
+		if (".html" === format) {
+			return this.toHTML(props)
+		}
+		return " ".repeat(indent) + `${this.mdTag}${this.content}${this.mdEnd}${this.href})`
+	}
+
 	/**
 	 *
 	 * @param {string} text
@@ -42,12 +57,10 @@ class MDLink extends MDElement {
 		const content = match[1]
 		const href = match[2]
 		// Update context position (not used elsewhere but keeps parity with other parsers)
-		context.i = i + match[0].length
+		context.i = i + 1
 		return new MDLink({
 			content,
 			href
 		})
 	}
 }
-
-export default MDLink

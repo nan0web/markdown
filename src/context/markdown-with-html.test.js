@@ -22,7 +22,7 @@ describe("markdown-with-html.md", () => {
 	/** @type {DB} */
 	const db = new DB()
 
-	it.todo("should load and render the document identically (ignoring insignificant whitespace)", async () => {
+	it("should load and render the document identically (ignoring insignificant whitespace)", async () => {
 		const text = await db.loadDocument("src/context/markdown-with-html.md")
 		const md = new Markdown()
 		md.parse(text)

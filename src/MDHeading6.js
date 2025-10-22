@@ -1,14 +1,19 @@
 import MDHeading from "./MDHeading.js"
 
 /**
- * Heading element.
+ * Heading6 element.
  */
 export default class MDHeading6 extends MDHeading {
-	tag = "<h6>"
-	end = "</h6>"
-	mdTag = "###### "
-	mdEnd = "\n"
+	static get defaultTag() { return "<h6>" }
+	static get defaultEnd() { return "</h6>" }
+	static get defaultMdTag() { return "###### " }
+	static get defaultMdEnd() { return "\n" }
 
+	/**
+	 * Parses a heading6 from markdown text.
+	 * @param {string} text
+	 * @returns {MDHeading6|false}
+	 */
 	static parse(text) {
 		const match = text.match(/^######\s+(.*)$/)
 		if (!match) {
@@ -16,6 +21,7 @@ export default class MDHeading6 extends MDHeading {
 		}
 		return new MDHeading6({ content: match[1] })
 	}
+
 	/**
 	 * @param {*} input
 	 * @returns {MDHeading6}

@@ -8,26 +8,33 @@ import MDElement from "./MDElement.js"
  * @property {string} [language]
  */
 export default class MDCodeBlock extends MDElement {
+	/** @type {((el: MDCodeBlock) => string)} */
+	static get defaultTag() {
+		return el => `<pre>${el.language ? `<code class="language-${el.language}">` : ""}`
+	}
+	/** @type {((el: MDCodeBlock) => string)} */
+	static get defaultMdTag() { return el => `\`\`\`${el.language}\n` }
 	/** @type {string} */
-	tag = "<pre>"
-	/** @type {string | {(el: MDCodeBlock): string}} */
-	// @ts-ignore MDCodeBlock extends MDElement
-	mdTag = (el) => "```" + el.language + "\n"
-	/** @type {string} */
-	mdEnd = "\n```\n"
-	/** @type {string} */
-	end = "</pre>"
+	static get defaultMdEnd() { return "\n```\n" }
+	/** @type {((el: MDCodeBlock) => string)} */
+	static get defaultEnd() {
+		return el => `${el.language ? `</code>` : ""}</pre>`
+	}
+
 	/** @type {string} */
 	language
+
 	/**
 	 * @param {MDCodeBlockProps & MDElementProps} props
 	 */
 	constructor(props = {}) {
 		super(props)
 		const {
-			language = ""
+			language = "",
+			content = ""
 		} = props
 		this.language = String(language)
+		this.content = String(content)
 	}
 
 	toHTML(props = {}) {
@@ -38,6 +45,7 @@ export default class MDCodeBlock extends MDElement {
 	}
 
 	/**
+	 * Parses a code block from markdown text.
 	 * @param {string} text
 	 * @param {{i?: number, rows?: string[]}} context
 	 * @returns {MDCodeBlock|false}

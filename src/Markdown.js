@@ -179,7 +179,9 @@ export default class Markdown {
 				path.push(el)
 				if (typeof intercepted === "string") return intercepted
 			}
-			return el.toHTML()
+			const tag = typeof el.tag === 'function' ? el.tag : el.tag;
+			const end = typeof el.end === 'function' ? el.end : el.end;
+			return (typeof tag === 'function' ? tag(el) : tag) + el.content + (typeof end === 'function' ? end(el) : end);
 		})
 		return htmlParts.join("\n")
 	}
@@ -200,7 +202,9 @@ export default class Markdown {
 				path.push(el)
 				if (typeof intercepted === "string") return intercepted
 			}
-			return el.toHTML()
+			const tag = typeof el.tag === 'function' ? el.tag : el.tag;
+			const end = typeof el.end === 'function' ? el.end : el.end;
+			return (typeof tag === 'function' ? tag(el) : tag) + el.content + (typeof end === 'function' ? end(el) : end);
 		})
 		return htmlParts.join("\n")
 	}
@@ -219,7 +223,9 @@ export default class Markdown {
 			el instanceof MDHeading5 ||
 			el instanceof MDHeading6
 		) {
-			return `<${el.tag.slice(1, -1)}>${el.content}</${el.tag.slice(1, -1)}>`
+			const tag = typeof el.tag === 'function' ? el.tag : el.tag;
+			const endTag = typeof el.end === 'function' ? el.end : el.end;
+			return `${typeof tag === 'function' ? tag(el) : tag}${el.content}${typeof endTag === 'function' ? endTag(el) : endTag}`
 		}
 		if (el instanceof MDParagraph) {
 			return `<p>${el.content}</p>`
@@ -240,6 +246,8 @@ export default class Markdown {
 			return `<hr />`
 		}
 		// fallback to tag + content + end
-		return el.tag + el.content + el.end
+		const tag = typeof el.tag === 'function' ? el.tag : el.tag;
+		const end = typeof el.end === 'function' ? el.end : el.end;
+		return (typeof tag === 'function' ? tag(el) : tag) + el.content + (typeof end === 'function' ? end(el) : end)
 	}
 }

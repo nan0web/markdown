@@ -10,20 +10,26 @@ import { ContainerObject } from "@nan0web/types"
  * @property {string} [mdEnd]
  * @property {MDElement[]} [children]
  */
-class MDElement extends ContainerObject {
+export default class MDElement extends ContainerObject {
 	static TAG_MARKDOWN = ""
+	static get defaultMdTag() { return "" }
+	static get defaultMdEnd() { return "" }
+	static get defaultTag() { return "" }
+	static get defaultEnd() { return "" }
+
 	/** @type {string} */
 	content
-	/** @type {string | {(el: MDElement): string}} */
+	/** @type {string|Function} */
 	mdTag
-	/** @type {string | {(el: MDElement): string}} */
+	/** @type {string|Function} */
 	mdEnd
-	/** @type {string | {(el: MDElement): string}} */
+	/** @type {string|Function} */
 	tag
-	/** @type {string | {(el: MDElement): string}} */
+	/** @type {string|Function} */
 	end
 	/** @type {MDElement[]} */
-	children
+	children = []
+
 	/**
 	 * @param {MDElementProps} props
 	 */
@@ -34,18 +40,23 @@ class MDElement extends ContainerObject {
 		super(props)
 		const {
 			content = "",
-			tag = "",
-			end = "",
-			mdTag = "",
-			mdEnd = "",
-			children = []
+			tag = /** @type {typeof MDElement} */ (this.constructor).defaultTag,
+			end = /** @type {typeof MDElement} */ (this.constructor).defaultEnd,
+			mdTag = /** @type {typeof MDElement} */ (this.constructor).defaultMdTag,
+			mdEnd = /** @type {typeof MDElement} */ (this.constructor).defaultMdEnd,
+			children = [],
 		} = props
 		this.content = String(content)
-		this.tag = "function" === typeof tag ? tag : String(tag)
-		this.end = "function" === typeof end ? end : String(end)
-		this.mdTag = "function" === typeof mdTag ? mdTag : String(mdTag)
-		this.mdEnd = "function" === typeof mdEnd ? mdEnd : String(mdEnd)
-		this.children = children.map(child => MDElement.from(child))
+		this.tag = tag
+		this.end = end
+		this.mdTag = mdTag
+		this.mdEnd = mdEnd
+		children.map(child => {
+			if (!(child instanceof MDElement)) {
+				throw new Error("Every child must be an instance of MDElement")
+			}
+		})
+		this.children = children
 	}
 
 	get empty() {
@@ -60,6 +71,7 @@ class MDElement extends ContainerObject {
 	get recent() {
 		return MDElement.from(super.recent)
 	}
+
 	/**
 	 * Removes the element from the container.
 	 * @param {MDElement} element
@@ -68,6 +80,7 @@ class MDElement extends ContainerObject {
 	remove(element) {
 		return super.remove(element)
 	}
+
 	/**
 	 * Finds an element by filter.
 	 *
@@ -78,6 +91,7 @@ class MDElement extends ContainerObject {
 	find(filter, recursively = false) {
 		return super.find(filter, recursively)
 	}
+
 	/**
 	 * Flattens the tree into an array.
 	 *
@@ -86,9 +100,11 @@ class MDElement extends ContainerObject {
 	flat() {
 		return super.flat().map(el => MDElement.from(el))
 	}
+
 	toArray() {
 		return super.toArray().map(el => MDElement.from(el))
 	}
+
 	/**
 	 * Filters children.
 	 *
@@ -99,6 +115,7 @@ class MDElement extends ContainerObject {
 	filter(filter, recursively = false) {
 		return super.filter(filter, recursively).map(el => MDElement.from(el))
 	}
+
 	/**
 	 * Maps over children.
 	 *
@@ -110,6 +127,7 @@ class MDElement extends ContainerObject {
 		// @ts-ignore MDElement extends ContainerObject
 		return super.map(callback, recursively)
 	}
+
 	/**
 	 * Asynchronously maps over children.
 	 *
@@ -121,7 +139,6 @@ class MDElement extends ContainerObject {
 		// @ts-ignore MDElement extends ContainerObject
 		return await super.asyncMap(callback, recursively)
 	}
-
 
 	/**
 	 * @throws
@@ -153,9 +170,12 @@ class MDElement extends ContainerObject {
 		if (".html" === format) {
 			return this.toHTML(props)
 		}
-		const mdTag = "function" === typeof this.mdTag ? this.mdTag(this) : this.mdTag
-		const mdEnd = "function" === typeof this.mdEnd ? this.mdEnd(this) : this.mdEnd
-		const contentLine = mdTag + this.content + mdEnd
+		if (".txt" === format) {
+			return this.toTEXT(props)
+		}
+		const mdTag = "function" === typeof this.mdTag ? this.mdTag : this.mdTag
+		const mdEnd = "function" === typeof this.mdEnd ? this.mdEnd : this.mdEnd
+		const contentLine = (typeof mdTag === "function" ? mdTag(this) : mdTag) + this.content + (typeof mdEnd === "function" ? mdEnd(this) : mdEnd)
 		const childrenLines = this.children.map(
 			child => child.toString({ indent: indent + tab.length, format })
 		)
@@ -173,12 +193,33 @@ class MDElement extends ContainerObject {
 			indent = 0,
 		} = props
 		const indentStr = " ".repeat(indent)
-		const tag = "function" === typeof this.tag ? this.tag(this) : this.tag
-		const end = "function" === typeof this.end ? this.end(this) : this.end
+		const tag = "function" === typeof this.tag ? this.tag : this.tag
+		const end = "function" === typeof this.end ? this.end : this.end
+		const contentLine = indentStr + (typeof tag === "function" ? tag(this) : tag) + this.content + (typeof end === "function" ? end(this) : end)
+		const childrenLines = this.children.map(child => child.toHTML({ indent: indent + 2 }))
+		return [contentLine, ...childrenLines].join("\n")
+	}
+
+	/**
+	 * Convert element and children to TEXT string with indentation.
+	 * @param {object} props
+	 * @param {number} [props.indent=0]
+	 * @param {string} [props.tag=""]
+	 * @param {string} [props.end=""]
+	 * @returns {string}
+	 */
+	toTEXT(props = {}) {
+		const {
+			indent = 0,
+			tag = "",
+			end = "",
+		} = props
+		const indentStr = " ".repeat(indent)
 		const contentLine = indentStr + tag + this.content + end
 		const childrenLines = this.children.map(child => child.toHTML({ indent: indent + 2 }))
 		return [contentLine, ...childrenLines].join("\n")
 	}
+
 	/**
 	 * Create an element from a props object or string.
 	 * @param {MDElement | object | string} input
@@ -193,5 +234,3 @@ class MDElement extends ContainerObject {
 		return this.toString()
 	}
 }
-
-export default MDElement

@@ -4,10 +4,10 @@ import MDElement from "./MDElement.js"
  * Table cell element.
  */
 export default class MDTableCell extends MDElement {
-	tag = "<td>"
-	end = "</td>"
-	mdTag = "|"
-	mdEnd = "|"
+	static get defaultTag() { return "<td>" }
+	static get defaultEnd() { return "</td>" }
+	static get defaultMdTag() { return "|" }
+	static get defaultMdEnd() { return "|" }
 
 	static parse(text, context = {}) {
 		return false

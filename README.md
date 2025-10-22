@@ -1,8 +1,6 @@
 # @nan0web/markdown
 
-|Package name|[Status](https://github.com/nan0web/monorepo/blob/main/system.md#написання-сценаріїв)|Documentation|Test coverage|Features|Npm version|
-|---|---|---|---|---|---|
- |[@nan0web/markdown](https://github.com/nan0web/markdown/) |🟢 `97.1%` |🧪 [English 🏴󠁧󠁢󠁥󠁮󠁧󠁿](https://github.com/nan0web/markdown/blob/main/README.md)<br />[Українською 🇺🇦](https://github.com/nan0web/markdown/blob/main/docs/uk/README.md) |🟡 `83.9%` |✅ d.ts 📜 system.md 🕹️ playground |— |
+<!-- %PACKAGE_STATUS% -->
 
 A zero-dependency, extensible Markdown parser for nan0web.
 

@@ -1,16 +1,15 @@
-import MDElement from "./MDElement.js"
+import MDElement from './MDElement.js'
 
 /**
  * Space element for representing empty lines or whitespace blocks.
  */
 export default class MDSpace extends MDElement {
-
 	constructor(props = {}) {
 		super(props)
-		if ("string" === typeof props) {
+		if ('string' === typeof props) {
 			props = { content: props }
 		}
-		const { content = "\n" } = props
+		const { content = '\n' } = props
 		this.content = content
 	}
 
@@ -29,7 +28,7 @@ export default class MDSpace extends MDElement {
 		const spaceLines = []
 		let j = i
 
-		while (j < rows.length && rows[j].trim() === "") {
+		while (j < rows.length && rows[j].trim() === '') {
 			spaceLines.push(rows[j])
 			j++
 		}

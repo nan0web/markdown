@@ -1,14 +1,22 @@
-import MDElement from "./MDElement.js"
+import MDElement from './MDElement.js'
 
 /**
  * Link element.
  */
 export default class MDLink extends MDElement {
 	/** @type {string} */
-	static get defaultTag() { return "<a" }
-	static get defaultMdTag() { return "[" }
-	static get defaultMdEnd() { return "](" }
-	static get defaultEnd() { return "</a>" }
+	static get defaultTag() {
+		return '<a'
+	}
+	static get defaultMdTag() {
+		return '['
+	}
+	static get defaultMdEnd() {
+		return ']('
+	}
+	static get defaultEnd() {
+		return '</a>'
+	}
 
 	/** @type {string} */
 	href
@@ -18,28 +26,21 @@ export default class MDLink extends MDElement {
 	 */
 	constructor(props = {}) {
 		super(props)
-		const {
-			href = ""
-		} = props
+		const { href = '' } = props
 		this.href = href
 	}
 
 	toHTML(props = {}) {
-		const {
-			indent = 0,
-		} = props
-		return " ".repeat(indent) + `${this.tag} href="${this.href}">${this.content}${this.end}`
+		const { indent = 0 } = props
+		return ' '.repeat(indent) + `${this.tag} href="${this.href}">${this.content}${this.end}`
 	}
 
 	toString(props = {}) {
-		const {
-			indent = 0,
-			format = ".md",
-		} = props
-		if (".html" === format) {
+		const { indent = 0, format = '.md' } = props
+		if ('.html' === format) {
 			return this.toHTML(props)
 		}
-		return " ".repeat(indent) + `${this.mdTag}${this.content}${this.mdEnd}${this.href})`
+		return ' '.repeat(indent) + `${this.mdTag}${this.content}${this.mdEnd}${this.href})`
 	}
 
 	/**
@@ -60,7 +61,7 @@ export default class MDLink extends MDElement {
 		context.i = i + 1
 		return new MDLink({
 			content,
-			href
+			href,
 		})
 	}
 }

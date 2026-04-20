@@ -1,13 +1,17 @@
-import MDList from "./MDList.js"
-import MDListItem from "./MDListItem.js"
+import MDList from './MDList.js'
+import MDListItem from './MDListItem.js'
 
 /**
  * Ordered list element – implements its own logic instead of extending MDList
  * to avoid circular import issues.
  */
 export default class MDOrderedList extends MDList {
-	static get defaultMdTag() { return "1. " }
-	static get defaultMdEnd() { return "\n" }
+	static get defaultMdTag() {
+		return '1. '
+	}
+	static get defaultMdEnd() {
+		return '\n'
+	}
 
 	constructor(props = {}) {
 		// Force ordered flag for the parent class.
@@ -38,6 +42,6 @@ MDOrderedList.parse = function (text, context = { i: 0, rows: [] }) {
 	}
 	context.i = j
 	return new MDOrderedList({
-		children
+		children,
 	})
 }

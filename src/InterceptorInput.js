@@ -1,4 +1,4 @@
-import MDElement from "./MDElement.js"
+import MDElement from './MDElement.js'
 
 export default class InterceptorInput {
 	/** @type {MDElement} */
@@ -12,10 +12,7 @@ export default class InterceptorInput {
 	 * @param {MDElement[]} [input.path=[]]
 	 */
 	constructor(input) {
-		const {
-			element,
-			path = [],
-		} = input
+		const { element, path = [] } = input
 		this.element = element
 		this.path = path
 	}

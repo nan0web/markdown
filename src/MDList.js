@@ -1,14 +1,22 @@
-import MDElement from "./MDElement.js"
-import MDListItem from "./MDListItem.js"
+import MDElement from './MDElement.js'
+import MDListItem from './MDListItem.js'
 
 /**
  * List element.
  */
 export default class MDList extends MDElement {
-	static get defaultTag() { return "<ul>" }
-	static get defaultEnd() { return "</ul>" }
-	static get defaultMdTag() { return "" }
-	static get defaultMdEnd() { return "\n" }
+	static get defaultTag() {
+		return '<ul>'
+	}
+	static get defaultEnd() {
+		return '</ul>'
+	}
+	static get defaultMdTag() {
+		return ''
+	}
+	static get defaultMdEnd() {
+		return '\n'
+	}
 
 	/** @type {boolean} */
 	ordered = false
@@ -18,9 +26,9 @@ export default class MDList extends MDElement {
 		const { ordered = false } = props
 		this.ordered = ordered
 		if (this.ordered) {
-			this.tag = "<ol>"
-			this.end = "</ol>"
-			this.mdTag = "1."
+			this.tag = '<ol>'
+			this.end = '</ol>'
+			this.mdTag = '1.'
 		}
 	}
 
@@ -30,13 +38,13 @@ export default class MDList extends MDElement {
 	 * @returns {this}
 	 */
 	add(element) {
-		if (typeof element === "string") {
+		if (typeof element === 'string') {
 			// Wrap raw strings into a list item element.
 			element = new MDListItem({ content: element })
 		}
 		// Ensure the element is a markdown element before adding.
 		if (!(element instanceof MDElement)) {
-			throw new TypeError("Only markdown elements can be added to a list")
+			throw new TypeError('Only markdown elements can be added to a list')
 		}
 		// super.add returns the inserted element; we forward that.
 		return super.add(element)
@@ -52,17 +60,12 @@ export default class MDList extends MDElement {
 	 * @returns {string}
 	 */
 	toString(props = {}) {
-		const {
-			indent = 0,
-			format = ".md",
-		} = props
-		if (".html" === format) {
+		const { indent = 0, format = '.md' } = props
+		if ('.html' === format) {
 			return this.toHTML({ indent })
 		}
-		const childrenLines = this.children.map(child =>
-			child.toString({ indent, format })
-		)
-		return this.mdTag + childrenLines.filter(s => "" !== s).join("") + this.mdEnd
+		const childrenLines = this.children.map((child) => child.toString({ indent, format }))
+		return this.mdTag + childrenLines.filter((s) => '' !== s).join('') + this.mdEnd
 	}
 
 	/**
@@ -77,7 +80,7 @@ export default class MDList extends MDElement {
 		if (!match) {
 			return false
 		}
-		const ordered = match[1].endsWith(".")
+		const ordered = match[1].endsWith('.')
 		const children = []
 		let j = i
 		while (j < rows.length) {
@@ -90,7 +93,7 @@ export default class MDList extends MDElement {
 		context.i = j
 		return new MDList({
 			ordered,
-			children
+			children,
 		})
 	}
 }

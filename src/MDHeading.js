@@ -1,4 +1,4 @@
-import MDElement from "./MDElement.js"
+import MDElement from './MDElement.js'
 
 /**
  * @typedef {Object} MDHeadingProps
@@ -10,13 +10,21 @@ import MDElement from "./MDElement.js"
  */
 export default class MDHeading extends MDElement {
 	/** @type {string | ((el: MDHeading) => string)} */
-	static get defaultTag() { return el => `<h${el.heading || 1}>` }
+	static get defaultTag() {
+		return (el) => `<h${el.heading || 1}>`
+	}
 	/** @type {string | ((el: MDHeading) => string)} */
-	static get defaultEnd() { return el => `</h${el.heading || 1}>` }
+	static get defaultEnd() {
+		return (el) => `</h${el.heading || 1}>`
+	}
 	/** @type {string | ((el: MDHeading) => string)} */
-	static get defaultMdTag() { return el => "#".repeat(el.heading || 1) + " " }
+	static get defaultMdTag() {
+		return (el) => '#'.repeat(el.heading || 1) + ' '
+	}
 	/** @type {string | ((el: MDHeading) => string)} */
-	static get defaultMdEnd() { return "\n" }
+	static get defaultMdEnd() {
+		return '\n'
+	}
 
 	/** @type {number} */
 	heading
@@ -27,11 +35,9 @@ export default class MDHeading extends MDElement {
 	 */
 	constructor(props = {}) {
 		super(props)
-		let {
-			heading = 0
-		} = props
+		let { heading = 0 } = props
 		if (!heading) {
-			heading = String("function" === typeof this.mdTag ? this.mdTag(this) : this.mdTag).length - 1
+			heading = String('function' === typeof this.mdTag ? this.mdTag(this) : this.mdTag).length - 1
 		}
 		this.heading = Number(heading)
 	}

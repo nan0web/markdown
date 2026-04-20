@@ -3,41 +3,28 @@ import assert from 'node:assert'
 import MDConfig from './MDConfig.js'
 import ParseContext from './Parse/Context.js'
 
-const correctConfigInput = [
-	"---",
-	"key1: value1",
-	"# comment",
-	"key2: value2",
-	"---"
-].join("\n")
+const correctConfigInput = ['---', 'key1: value1', '# comment', 'key2: value2', '---'].join('\n')
 
 const testMap = new Map([
-	["Parse correct config", [
-		correctConfigInput,
-		new MDConfig({
-			config: {
-				key1: 'value1',
-				key2: 'value2',
-			},
-			content: correctConfigInput.slice(4, -4),
-			$comments: new Map([[2, 'comment']])
-		}),
-		5,
-	]],
-	["Parse correct config with empty key", [
+	[
+		'Parse correct config',
 		[
-			"---",
-			"",
-			"key1: value1",
-			"# comment",
-			"",
-			"key2: value2",
-			"",
-			"---"
-		].join("\n"),
-		false,
-		0
-	]],
+			correctConfigInput,
+			new MDConfig({
+				config: {
+					key1: 'value1',
+					key2: 'value2',
+				},
+				content: correctConfigInput.slice(4, -4),
+				$comments: new Map([[2, 'comment']]),
+			}),
+			5,
+		],
+	],
+	[
+		'Parse correct config with empty key',
+		[['---', '', 'key1: value1', '# comment', '', 'key2: value2', '', '---'].join('\n'), false, 0],
+	],
 ])
 
 suite('MDConfig', () => {
@@ -55,16 +42,16 @@ suite('MDConfig', () => {
 			})
 		}
 	})
-	
-	it("should handle config with nested structure", () => {
+
+	it('should handle config with nested structure', () => {
 		const input = [
-			"---",
-			"name: Test Config",
-			"version: 1.0.0",
-			"# This is a comment",
-			"enabled: true",
-			"---"
-		].join("\n")
+			'---',
+			'name: Test Config',
+			'version: 1.0.0',
+			'# This is a comment',
+			'enabled: true',
+			'---',
+		].join('\n')
 		const context = new ParseContext({ i: 0, rows: input.split('\n') })
 		const result = MDConfig.parse(input, context)
 		assert.ok(result instanceof MDConfig)

@@ -1,12 +1,8 @@
-import { describe, it, before, beforeEach } from "node:test"
-import assert from "node:assert/strict"
-import FS from "@nan0web/db-fs"
-import { NoConsole } from "@nan0web/log"
-import {
-	DatasetParser,
-	DocsParser,
-	runSpawn,
-} from "@nan0web/test"
+import { describe, it, before, beforeEach } from 'node:test'
+import assert from 'node:assert/strict'
+import FS from '@nan0web/db-fs'
+import { NoConsole } from '@nan0web/log'
+import { DatasetParser, DocsParser, runSpawn } from '@nan0web/test'
 import {
 	Markdown,
 	MDElement,
@@ -25,13 +21,13 @@ import {
 	MDTable,
 	MDTaskList,
 	MDTableRow,
-} from "./index.js"
+} from './index.js'
 
 const fs = new FS()
 let pkg
 
 before(async () => {
-	const doc = await fs.loadDocument("package.json", {})
+	const doc = await fs.loadDocument('package.json', {})
 	pkg = doc || {}
 })
 
@@ -70,37 +66,37 @@ function testRender() {
 	 *
 	 * ## Installation
 	 */
-	it("How to install with npm?", () => {
+	it('How to install with npm?', () => {
 		/**
 		 * ```bash
 		 * npm install @nan0web/markdown
 		 * ```
 		 */
-		assert.equal(pkg.name, "@nan0web/markdown")
+		assert.equal(pkg.name, '@nan0web/markdown')
 	})
 
 	/**
 	 * @docs
 	 */
-	it("How to install with pnpm?", () => {
+	it('How to install with pnpm?', () => {
 		/**
 		 * ```bash
 		 * pnpm add @nan0web/markdown
 		 * ```
 		 */
-		assert.equal(pkg.name, "@nan0web/markdown")
+		assert.equal(pkg.name, '@nan0web/markdown')
 	})
 
 	/**
 	 * @docs
 	 */
-	it("How to install with yarn?", () => {
+	it('How to install with yarn?', () => {
 		/**
 		 * ```bash
 		 * yarn add @nan0web/markdown
 		 * ```
 		 */
-		assert.equal(pkg.name, "@nan0web/markdown")
+		assert.equal(pkg.name, '@nan0web/markdown')
 	})
 
 	/**
@@ -109,14 +105,21 @@ function testRender() {
 	 *
 	 * ### Basic Parsing
 	 *
-	 * Parses Markdown text into an array of `MDElement` objects.
+	 * Parses Markdown text into an array of `MDElement` objects. You can either pass the text directly into the constructor for immediate parsing, or use the `.parse()` method.
 	 */
-	it("How to parse Markdown text into elements?", () => {
+	it('How to parse Markdown text into elements?', () => {
 		//import { Markdown } from "@nan0web/markdown"
+		
+		// 1. Direct parsing via constructor
+		const mdFast = new Markdown('# Fast Parse')
+		console.info(mdFast.document.children.length) // ← 1 (heading)
+		assert.equal(console.output()[0][1], 1)
+		
+		// 2. Parsing via method
 		const md = new Markdown()
-		const elements = md.parse("# Hello World\n\nThis is a paragraph.")
+		const elements = md.parse('# Hello World\n\nThis is a paragraph.')
 		console.info(elements.length) // ← 3 (heading, paragraph, space)
-		assert.equal(console.output()[0][1], 3)
+		assert.equal(console.output()[1][1], 3)
 		assert.ok(elements[0] instanceof MDHeading1)
 		assert.ok(elements[1] instanceof MDElement) // Paragraphs are parsed as generic MDElement in current implementation
 	})
@@ -127,16 +130,16 @@ function testRender() {
 	 *
 	 * Converts parsed elements to HTML string.
 	 */
-	it("How to convert parsed Markdown to HTML?", () => {
+	it('How to convert parsed Markdown to HTML?', () => {
 		//import { Markdown } from "@nan0web/markdown"
 		const md = new Markdown()
-		md.parse("# Title\n\nParagraph\n\n1. first\n2. second\n\n```js\ncode\n```\n\n")
+		md.parse('# Title\n\nParagraph\n\n1. first\n2. second\n\n```js\ncode\n```\n\n')
 		const html = md.stringify()
 		console.info(html) // ← <h1>Title</h1>...
-		assert.ok(console.output()[0][1].includes("<h1>Title</h1>"))
-		assert.ok(console.output()[0][1].includes("<p>Paragraph</p>"))
-		assert.ok(console.output()[0][1].includes("<ol>"))
-		assert.ok(console.output()[0][1].includes("<pre><code class=\"language-js\">code</code></pre>"))
+		assert.ok(console.output()[0][1].includes('<h1>Title</h1>'))
+		assert.ok(console.output()[0][1].includes('<p>Paragraph</p>'))
+		assert.ok(console.output()[0][1].includes('<ol>'))
+		assert.ok(console.output()[0][1].includes('<pre><code class="language-js">code</code></pre>'))
 	})
 
 	/**
@@ -145,10 +148,10 @@ function testRender() {
 	 *
 	 * Optionally accepts an interceptor function to customize rendering per element.
 	 */
-	it("How to use an interceptor for custom HTML rendering?", () => {
+	it('How to use an interceptor for custom HTML rendering?', () => {
 		//import { Markdown } from "@nan0web/markdown"
 		const md = new Markdown()
-		md.parse("# Title")
+		md.parse('# Title')
 		const html = md.stringify(({ element }) => {
 			if (element instanceof MDHeading1) {
 				return `<h1 class="custom">${element.content}</h1>`
@@ -163,24 +166,24 @@ function testRender() {
 	 * @docs
 	 * ### Handling Inline Code
 	 */
-	it("How to parse and stringify inline code in paragraphs?", () => {
+	it('How to parse and stringify inline code in paragraphs?', () => {
 		//import { Markdown } from "@nan0web/markdown"
-		const input = "`DB.path.test.js` is a test suite from the base `DB` class."
+		const input = '`DB.path.test.js` is a test suite from the base `DB` class.'
 		const elements = Markdown.parse(input)
 		const output = elements[0].toString()
 		console.info(output) // ← "`DB.path.test.js` is a test suite from the base `DB` class.\n\n"
-		assert.ok(console.output()[0][1].includes("`DB.path.test.js`"))
-		assert.ok(console.output()[0][1].includes("`DB`"))
+		assert.ok(console.output()[0][1].includes('`DB.path.test.js`'))
+		assert.ok(console.output()[0][1].includes('`DB`'))
 	})
 
 	/**
 	 * @docs
 	 * ### Working with Lists
 	 */
-	it("How to handle unordered lists?", () => {
+	it('How to handle unordered lists?', () => {
 		//import { Markdown } from "@nan0web/markdown"
 		const md = new Markdown()
-		const elements = md.parse("- item 1\n- item 2\n- item 3")
+		const elements = md.parse('- item 1\n- item 2\n- item 3')
 		console.info(elements.length) // ← 1
 		console.info(elements[0] instanceof MDList) // ← true
 		const list = elements[0].children
@@ -189,14 +192,14 @@ function testRender() {
 		assert.equal(console.output()[0][1], 1)
 		assert.equal(console.output()[1][1], true)
 		assert.equal(console.output()[2][1], 3)
-		assert.equal(console.output()[3][1], "item 1")
+		assert.equal(console.output()[3][1], 'item 1')
 	})
 
 	/**
 	 * @docs
 	 * ### Code Blocks
 	 */
-	it("How to parse fenced code blocks?", () => {
+	it('How to parse fenced code blocks?', () => {
 		//import { Markdown } from "@nan0web/markdown"
 		const md = new Markdown()
 		const input = "```js\nconsole.log('hi')\n```\n\n"
@@ -207,7 +210,7 @@ function testRender() {
 		console.info(code.content) // ← "console.log('hi')"
 		console.info(code instanceof MDCodeBlock) // ← true
 		assert.equal(console.output()[0][1], 2)
-		assert.equal(console.output()[1][1], "js")
+		assert.equal(console.output()[1][1], 'js')
 		assert.equal(console.output()[2][1], "console.log('hi')")
 		assert.equal(console.output()[3][1], true)
 	})
@@ -216,14 +219,15 @@ function testRender() {
 	 * @docs
 	 * ### Tables
 	 */
-	it("How to parse tables?", () => {
+	it('How to parse tables?', () => {
 		//import { Markdown } from "@nan0web/markdown"
-		const mdText = [
-			"| Header 1 | Header 2 | Header 3 |",
-			"|----------|----------|----------|",
-			"| Cell 1  | Cell 2  | Cell 3  |",
-			"| Cell 4  | Cell 5  | Cell 6  |",
-		].join("\n") + "\n\n"
+		const mdText =
+			[
+				'| Header 1 | Header 2 | Header 3 |',
+				'|----------|----------|----------|',
+				'| Cell 1  | Cell 2  | Cell 3  |',
+				'| Cell 4  | Cell 5  | Cell 6  |',
+			].join('\n') + '\n\n'
 		const elements = Markdown.parse(mdText)
 		console.info(elements.length) // ← 5 (table rows + space)
 		const table = elements[0]
@@ -236,9 +240,9 @@ function testRender() {
 	 * @docs
 	 * ### Task Lists
 	 */
-	it("How to parse task lists?", () => {
+	it('How to parse task lists?', () => {
 		//import { Markdown } from "@nan0web/markdown"
-		const input = "- [x] Write the press release\n- [ ] Update the website\n- [ ] Contact the media"
+		const input = '- [x] Write the press release\n- [ ] Update the website\n- [ ] Contact the media'
 		const elements = Markdown.parse(input)
 		console.info(elements.length) // ← 1
 		const taskList = elements[0]
@@ -254,7 +258,7 @@ function testRender() {
 	 *
 	 * ### `Markdown`
 	 *
-	 * Main parser class.
+	 * Main parser class. Accepts an optional `string` in its constructor for immediate parsing.
 	 *
 	 * * **Methods**
 	 *   * `parse(text: string): MDElement[]` – Parses Markdown into objects.
@@ -280,7 +284,7 @@ function testRender() {
 	 * - `MDBlockquote`, `MDHorizontalRule`
 	 * - `MDTable`, `MDTaskList`
 	 */
-	it("How to access core classes?", () => {
+	it('How to access core classes?', () => {
 		assert.ok(Markdown)
 		assert.ok(MDElement)
 		assert.ok(MDHeading1)
@@ -294,75 +298,75 @@ function testRender() {
 	 * @docs
 	 * ## Java•Script
 	 */
-	it("Uses `d.ts` files for autocompletion", () => {
-		assert.equal(pkg.types, "types/index.d.ts")
+	it('Uses `d.ts` files for autocompletion', () => {
+		assert.equal(pkg.types, 'types/index.d.ts')
 	})
 
 	/**
 	 * @docs
 	 * ## CLI Playground
 	 */
-	it("How to run playground script?", async () => {
+	it('How to run playground script?', async () => {
 		/**
 		 * ```bash
 		 * # Clone the repository and run the CLI playground
 		 * git clone https://github.com/nan0web/markdown.git
 		 * cd markdown
 		 * npm install
-		 * npm run playground
+		 * npm run play
 		 * ```
 		 */
-		assert.ok(String(pkg.scripts?.playground))
-		const response = await runSpawn("git", ["remote", "get-url", "origin"])
-		assert.ok(response.code === 0, "git command fails (e.g., not in a git repo)")
-		assert.ok(response.text.trim().endsWith(":nan0web/markdown.git"))
+		assert.ok(String(pkg.scripts?.play))
+		const response = await runSpawn('git', ['remote', 'get-url', 'origin'])
+		assert.ok(response.code === 0, 'git command fails (e.g., not in a git repo)')
+		assert.ok(response.text.trim().endsWith(':nan0web/markdown.git'))
 	})
 
 	/**
 	 * @docs
 	 * ## Contributing
 	 */
-	it("How to contribute? - [check here](./CONTRIBUTING.md)", async () => {
-		assert.equal(pkg.scripts?.precommit, "npm test")
-		assert.equal(pkg.scripts?.prepush, "npm test")
-		assert.equal(pkg.scripts?.prepare, "husky")
+	it('How to contribute? - [check here](./CONTRIBUTING.md)', async () => {
+		assert.equal(pkg.scripts?.precommit, 'npm test')
+		assert.equal(pkg.scripts?.prepush, 'npm test')
+		assert.equal(pkg.scripts?.prepare, 'husky')
 
 		// Create CONTRIBUTING.md if it doesn't exist
 		try {
-			await fs.saveDocument("CONTRIBUTING.md", "# Contributing\n\nSee our contribution guidelines.")
+			await fs.saveDocument('CONTRIBUTING.md', '# Contributing\n\nSee our contribution guidelines.')
 		} catch (e) {
 			// File might already exist, which is fine
 		}
 
-		const text = await fs.loadDocument("CONTRIBUTING.md")
-		const str = String(text)
-		assert.ok(str.includes("# Contributing"))
+		const text = await fs.loadDocument('CONTRIBUTING.md')
+		const str = String(text.content || text)
+		assert.ok(str.includes('# Contributing'))
 	})
 
 	/**
 	 * @docs
 	 * ## License
 	 */
-	it("How to license ISC? - [check here](./LICENSE)", async () => {
+	it('How to license ISC? - [check here](./LICENSE)', async () => {
 		/** @docs */
-		const text = await fs.loadDocument("LICENSE")
-		assert.ok(String(text).includes("ISC"))
+		const text = await fs.loadDocument('LICENSE')
+		assert.ok(String(text).includes('ISC'))
 	})
 }
 
-describe("README.md testing", testRender)
+describe('README.md testing', testRender)
 
-describe("Rendering README.md", async () => {
-	let text = ""
-	const format = new Intl.NumberFormat("en-US").format
+describe('Rendering README.md', async () => {
+	let text = ''
+	const format = new Intl.NumberFormat('en-US').format
 	const parser = new DocsParser()
 	text = String(parser.decode(testRender))
-	await fs.saveDocument("README.md", text)
+	await fs.saveDocument('README.md', text)
 	const dataset = DatasetParser.parse(text, pkg.name)
-	await fs.saveDocument(".datasets/README.dataset.jsonl", dataset)
+	await fs.saveDocument('.datasets/README.dataset.jsonl', dataset)
 
 	it(`document is rendered in README.md [${format(Buffer.byteLength(text))}b]`, async () => {
-		const text = await fs.loadDocument("README.md")
-		assert.ok(text.includes("## License"))
+		const docText = await fs.loadDocument('README.md')
+		assert.ok(String(docText.content || docText).includes('## License'))
 	})
 })

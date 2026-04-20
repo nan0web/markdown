@@ -1,27 +1,27 @@
-import MDElement from "./MDElement.js"
-import MDParagraph from "./MDParagraph.js"
-import MDHeading1 from "./MDHeading1.js"
-import MDHeading2 from "./MDHeading2.js"
-import MDHeading3 from "./MDHeading3.js"
-import MDHeading4 from "./MDHeading4.js"
-import MDHeading5 from "./MDHeading5.js"
-import MDHeading6 from "./MDHeading6.js"
-import MDOrderedList from "./MDOrderedList.js"
-import MDList from "./MDList.js"
-import MDListItem from "./MDListItem.js"
-import MDCodeBlock from "./MDCodeBlock.js"
-import MDCodeInline from "./MDCodeInline.js"
-import MDLink from "./MDLink.js"
-import MDImage from "./MDImage.js"
-import MDBlockquote from "./MDBlockquote.js"
-import MDHorizontalRule from "./MDHorizontalRule.js"
-import MDSpace from "./MDSpace.js"
-import MDTable from "./MDTable.js"
-import MDTableRow from "./MDTableRow.js"
-import MDTableCell from "./MDTableCell.js"
-import MDTaskList from "./MDTaskList.js"
-import ParseContext from "./Parse/Context.js"
-import InterceptorInput from "./InterceptorInput.js"
+import MDElement from './MDElement.js'
+import MDParagraph from './MDParagraph.js'
+import MDHeading1 from './MDHeading1.js'
+import MDHeading2 from './MDHeading2.js'
+import MDHeading3 from './MDHeading3.js'
+import MDHeading4 from './MDHeading4.js'
+import MDHeading5 from './MDHeading5.js'
+import MDHeading6 from './MDHeading6.js'
+import MDOrderedList from './MDOrderedList.js'
+import MDList from './MDList.js'
+import MDListItem from './MDListItem.js'
+import MDCodeBlock from './MDCodeBlock.js'
+import MDCodeInline from './MDCodeInline.js'
+import MDLink from './MDLink.js'
+import MDImage from './MDImage.js'
+import MDBlockquote from './MDBlockquote.js'
+import MDHorizontalRule from './MDHorizontalRule.js'
+import MDSpace from './MDSpace.js'
+import MDTable from './MDTable.js'
+import MDTableRow from './MDTableRow.js'
+import MDTableCell from './MDTableCell.js'
+import MDTaskList from './MDTaskList.js'
+import ParseContext from './Parse/Context.js'
+import InterceptorInput from './InterceptorInput.js'
 
 /**
  * Markdown parser for nanoweb.
@@ -60,13 +60,13 @@ export default class Markdown {
 	document
 
 	/**
-	 * @param {object} [input]
-	 * @param {MDElement} [input.document]
+	 * @param {Partial<Markdown> | string} [input]
 	 */
 	constructor(input = {}) {
-		const {
-			document = new MDElement()
-		} = input
+		if ('string' === typeof input) {
+			input = { document: new MDElement({ children: Markdown.parse(input) }) }
+		}
+		const { document = new MDElement() } = input
 		this.document = document
 	}
 
@@ -86,7 +86,7 @@ export default class Markdown {
 	 * @returns {MDElement[]} - Root element children
 	 */
 	static parse(text) {
-		const lines = String(text).split("\n")
+		const lines = String(text).split('\n')
 		const elements = []
 		let i = 0
 		while (i < lines.length) {
@@ -94,25 +94,25 @@ export default class Markdown {
 			let parsed = null
 			const context = new ParseContext({ i, rows: lines })
 			for (const Element of Markdown.ELEMENTS) {
-				if ("function" !== typeof Element.parse) {
+				if ('function' !== typeof Element.parse) {
 					throw new Error(`Element ${Element.name} has no static parse() method`)
 				}
 				parsed = Element.parse(line, context)
 				if (parsed) break
 				context.skipped.push(Element)
 			}
-			if (parsed && parsed.constructor && parsed.constructor.name === "MDCodeBlock") {
+			if (parsed && parsed.constructor && parsed.constructor.name === 'MDCodeBlock') {
 				// Find end of code block
 				let j = i + 1
-				while (j < lines.length && !lines[j].startsWith("```")) {
+				while (j < lines.length && !lines[j].startsWith('```')) {
 					j++
 				}
 				j++ // skip closing ```
 				i = j
-			} else if (parsed && parsed.constructor && parsed.constructor.name === "MDBlockquote") {
+			} else if (parsed && parsed.constructor && parsed.constructor.name === 'MDBlockquote') {
 				// Find end of blockquote
 				let j = i
-				while (j < lines.length && lines[j].startsWith(">")) {
+				while (j < lines.length && lines[j].startsWith('>')) {
 					j++
 				}
 				i = j
@@ -139,12 +139,12 @@ export default class Markdown {
 				// fallback to paragraph
 				const paragraphLines = []
 				let j = i
-				while (j < lines.length && lines[j].trim() !== "") {
+				while (j < lines.length && lines[j].trim() !== '') {
 					paragraphLines.push(lines[j])
 					j++
 				}
-				const paragraphContent = paragraphLines.join("\n")
-				if (paragraphContent.trim() !== "") {
+				const paragraphContent = paragraphLines.join('\n')
+				if (paragraphContent.trim() !== '') {
 					parsed = new MDParagraph({ content: paragraphContent })
 				} else {
 					parsed = new MDSpace({ content: lines[i] + '\n' })
@@ -162,28 +162,23 @@ export default class Markdown {
 		return elements
 	}
 
-
 	/**
 	 * Stringify elements to HTML string.
 	 * @param {(element: InterceptorInput) => string | null} [interceptor]
 	 * @returns {string}
 	 */
 	stringify(interceptor) {
-		// @ts-ignore MDElement has map from extended ContainerObject
 		const path = []
-		// @ts-ignore
-		const htmlParts = this.document.map(el => {
+		const htmlParts = this.document.map((el) => {
 			if (interceptor) {
 				const input = new InterceptorInput({ element: el, path })
 				const intercepted = interceptor(input)
 				path.push(el)
-				if (typeof intercepted === "string") return intercepted
+				if (typeof intercepted === 'string') return intercepted
 			}
-			const tag = typeof el.tag === 'function' ? el.tag : el.tag;
-			const end = typeof el.end === 'function' ? el.end : el.end;
-			return (typeof tag === 'function' ? tag(el) : tag) + el.content + (typeof end === 'function' ? end(el) : end);
+			return el.toHTML({ indent: 0 })
 		})
-		return htmlParts.join("\n")
+		return htmlParts.join('\n')
 	}
 
 	/**
@@ -192,21 +187,17 @@ export default class Markdown {
 	 * @returns {Promise<string>}
 	 */
 	async asyncStringify(interceptor) {
-		// @ts-ignore MDElement has map from extended ContainerObject
 		const path = []
-		// @ts-ignore
-		const htmlParts = await this.document.asyncMap(async el => {
+		const htmlParts = await this.document.asyncMap(async (el) => {
 			if (interceptor) {
 				const input = new InterceptorInput({ element: el, path })
 				const intercepted = await interceptor(input)
 				path.push(el)
-				if (typeof intercepted === "string") return intercepted
+				if (typeof intercepted === 'string') return intercepted
 			}
-			const tag = typeof el.tag === 'function' ? el.tag : el.tag;
-			const end = typeof el.end === 'function' ? el.end : el.end;
-			return (typeof tag === 'function' ? tag(el) : tag) + el.content + (typeof end === 'function' ? end(el) : end);
+			return el.toHTML({ indent: 0 })
 		})
-		return htmlParts.join("\n")
+		return htmlParts.join('\n')
 	}
 
 	/**
@@ -223,20 +214,20 @@ export default class Markdown {
 			el instanceof MDHeading5 ||
 			el instanceof MDHeading6
 		) {
-			const tag = typeof el.tag === 'function' ? el.tag : el.tag;
-			const endTag = typeof el.end === 'function' ? el.end : el.end;
+			const tag = typeof el.tag === 'function' ? el.tag : el.tag
+			const endTag = typeof el.end === 'function' ? el.end : el.end
 			return `${typeof tag === 'function' ? tag(el) : tag}${el.content}${typeof endTag === 'function' ? endTag(el) : endTag}`
 		}
 		if (el instanceof MDParagraph) {
 			return `<p>${el.content}</p>`
 		}
 		if (el instanceof MDList || el instanceof MDOrderedList) {
-			const tag = el.ordered ? "ol" : "ul"
-			const items = el.children.map(child => `<li>${child.content}</li>`).join("")
+			const tag = el.ordered ? 'ol' : 'ul'
+			const items = el.children.map((child) => `<li>${child.content}</li>`).join('')
 			return `<${tag}>${items}</${tag}>`
 		}
 		if (el instanceof MDCodeBlock) {
-			const langClass = el.language ? ` class="language-${el.language}"` : ""
+			const langClass = el.language ? ` class="language-${el.language}"` : ''
 			return `<pre><code${langClass}>${el.content}</code></pre>`
 		}
 		if (el instanceof MDBlockquote) {
@@ -246,8 +237,12 @@ export default class Markdown {
 			return `<hr />`
 		}
 		// fallback to tag + content + end
-		const tag = typeof el.tag === 'function' ? el.tag : el.tag;
-		const end = typeof el.end === 'function' ? el.end : el.end;
-		return (typeof tag === 'function' ? tag(el) : tag) + el.content + (typeof end === 'function' ? end(el) : end)
+		const tag = typeof el.tag === 'function' ? el.tag : el.tag
+		const end = typeof el.end === 'function' ? el.end : el.end
+		return (
+			(typeof tag === 'function' ? tag(el) : tag) +
+			el.content +
+			(typeof end === 'function' ? end(el) : end)
+		)
 	}
 }

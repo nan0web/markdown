@@ -1,7 +1,7 @@
-import { describe, it } from "node:test"
-import assert from "node:assert"
-import DB from "@nan0web/db-fs"
-import Markdown from "../Markdown.js"
+import { describe, it } from 'node:test'
+import assert from 'node:assert'
+import DB from '@nan0web/db-fs'
+import Markdown from '../Markdown.js'
 
 /**
  * Normalizes markdown text for comparison:
@@ -11,19 +11,19 @@ import Markdown from "../Markdown.js"
  */
 function normalize(md) {
 	return md
-		.split("\n")
-		.map(line => line.replace(/[ \t]+$/g, "")) // trim end spaces/tabs
-		.filter(line => line.trim().length > 0)   // drop blank lines
-		.join("\n")
+		.split('\n')
+		.map((line) => line.replace(/[ \t]+$/g, '')) // trim end spaces/tabs
+		.filter((line) => line.trim().length > 0) // drop blank lines
+		.join('\n')
 		.trim()
 }
 
-describe("markdown-with-html.md", () => {
+describe('markdown-with-html.md', () => {
 	/** @type {DB} */
 	const db = new DB()
 
-	it("should load and render the document identically (ignoring insignificant whitespace)", async () => {
-		const text = await db.loadDocument("src/context/markdown-with-html.md")
+	it('should load and render the document identically (ignoring insignificant whitespace)', async () => {
+		const text = await db.loadDocumentAs('.txt', 'src/context/markdown-with-html.md')
 		const md = new Markdown()
 		md.parse(text)
 

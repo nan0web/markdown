@@ -13,6 +13,7 @@
 Це **мова, яка превертає текст у довірену модель знання**.
 
 Кожен блок `.md` — це:
+
 - **фрагмент свідомості**
 - **можливість для дії**
 - **доведеність у формі дерева**
@@ -28,6 +29,7 @@
 > **Документ — це не вивід. Це вхід у систему.**
 
 `@nan0web/markdown` дозволяє:
+
 - **доводити знання через код**
 - витягувати структуру з `.md` → `model` → `test`
 - зберігати **контекст інтенції**, а не лише синтаксис
@@ -86,6 +88,7 @@ class AdGroup extends MDHeading3 {
 ```
 
 Це — **доведена архітектура**:
+
 - `MDHeading2: Продажі` → `new Campaign({ name: "Продажі" })`
 - `MDHeading3: Листування` → `new AdGroup({ name: "Листування", keywords: [...] })`
 
@@ -103,6 +106,7 @@ class ExtendedMarkdown extends Markdown {
 ```
 
 Використовується, щоб перетворити:
+
 - `releases/v1.0.0/release.md` → `ReleaseDocument`
 - `docs/uk/README.md` → перевірити структуру
 - `*.test.js` → з `.md` створити дію
@@ -113,15 +117,15 @@ class ExtendedMarkdown extends Markdown {
 
 ## 🔗 Інтеграція з іншими пакетами
 
-| Пакет | Як використовується |
-|-------|---------------------|
-| `@nan0web/ui-core` | `MDElement` → `Element` через `from()` |
-| `@nan0web/ui-react` | `toHTML()` → рендер блоків |
-| `@nan0web/db` | Зберігає `document` як `MDElement` |
-| `@nan0web/release` | `Markdown → Test` через `MarkdownToTest` |
-| `@nan0web/changelog` | `CHANGELOG.md` → `ExtendedMarkdown` |
-| `@nan0web/test` | Тести `*.test.js` ← з `src/README.md.js` |
-| `@nan0web/types` | `ContainerObject` → база `MDElement` |
+| Пакет                | Як використовується                      |
+| -------------------- | ---------------------------------------- |
+| `@nan0web/ui-core`   | `MDElement` → `Element` через `from()`   |
+| `@nan0web/ui-react`  | `toHTML()` → рендер блоків               |
+| `@nan0web/db`        | Зберігає `document` як `MDElement`       |
+| `@nan0web/release`   | `Markdown → Test` через `MarkdownToTest` |
+| `@nan0web/changelog` | `CHANGELOG.md` → `ExtendedMarkdown`      |
+| `@nan0web/test`      | Тести `*.test.js` ← з `src/README.md.js` |
+| `@nan0web/types`     | `ContainerObject` → база `MDElement`     |
 
 > `markdown` — не «підсистема».
 > Це **мова втілення ідеї**.
@@ -131,6 +135,7 @@ class ExtendedMarkdown extends Markdown {
 ## 🧪 Тестування: доверена модель
 
 ### Основні команди
+
 ```bash
 pnpm test                 # усі tets
 pnpm test:coverage        # покриття
@@ -140,6 +145,7 @@ nan0test status           # RRS оцінка
 ```
 
 ### Критерії довіри
+
 - ✅ `MDElement.from({})` працює
 - ✅ `element.add()` → реєструється у `recent`
 - ✅ `element.toString()` → відновлює початковий вигляд
@@ -156,14 +162,15 @@ nan0test status           # RRS оцінка
 ### Що має бути?
 
 ```js
-it("maє створити MDHeading1", () => {
-  const el = MDHeading1.from("Ідея")
+it('maє створити MDHeading1', () => {
+  const el = MDHeading1.from('Ідея')
   assert(el instanceof MDHeading1)
-  assert.equal(el.toString(), "# Ідея\n")
+  assert.equal(el.toString(), '# Ідея\n')
 })
 ```
 
 З `@docs` → генерується:
+
 - `README.md`
 - `.datasets/README.jsonl`
 
@@ -253,11 +260,12 @@ flowchart LR
 
 > _"Нуль — не порожнеча.  
 > Нуль — це текст, який чекає на перше `#`.  
-> На перше `1`."_  
+> На перше `1`."_
 
-**АрхіТехноМаг відповідає**  
+**АрхіТехноМаг відповідає**
+
 > "Почни з одного рядка.  
-> Закінчи створенням мови, на якій говорять зірки."  
+> Закінчи створенням мови, на якій говорять зірки."
 
 ---
 

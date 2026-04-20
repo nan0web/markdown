@@ -1,4 +1,4 @@
-import MDElement from "./MDElement.js"
+import MDElement from './MDElement.js'
 
 /** @typedef {import("./MDElement.js").MDElementProps} MDElementProps */
 
@@ -10,15 +10,19 @@ import MDElement from "./MDElement.js"
 export default class MDCodeBlock extends MDElement {
 	/** @type {((el: MDCodeBlock) => string)} */
 	static get defaultTag() {
-		return el => `<pre>${el.language ? `<code class="language-${el.language}">` : ""}`
+		return (el) => `<pre>${el.language ? `<code class="language-${el.language}">` : ''}`
 	}
 	/** @type {((el: MDCodeBlock) => string)} */
-	static get defaultMdTag() { return el => `\`\`\`${el.language}\n` }
+	static get defaultMdTag() {
+		return (el) => `\`\`\`${el.language}\n`
+	}
 	/** @type {string} */
-	static get defaultMdEnd() { return "\n```\n" }
+	static get defaultMdEnd() {
+		return '\n```\n'
+	}
 	/** @type {((el: MDCodeBlock) => string)} */
 	static get defaultEnd() {
-		return el => `${el.language ? `</code>` : ""}</pre>`
+		return (el) => `${el.language ? `</code>` : ''}</pre>`
 	}
 
 	/** @type {string} */
@@ -29,20 +33,12 @@ export default class MDCodeBlock extends MDElement {
 	 */
 	constructor(props = {}) {
 		super(props)
-		const {
-			language = "",
-			content = ""
-		} = props
+		const { language = '', content = '' } = props
 		this.language = String(language)
 		this.content = String(content)
 	}
 
-	toHTML(props = {}) {
-		if (this.language) {
-			return `${this.tag}<code class="language-${this.language}">${this.content}</code>${this.end}`
-		}
-		return super.toHTML(props)
-	}
+
 
 	/**
 	 * Parses a code block from markdown text.
@@ -60,7 +56,7 @@ export default class MDCodeBlock extends MDElement {
 		let j = i + 1
 
 		const contentLines = []
-		while (j < rows.length && !rows[j].startsWith("```")) {
+		while (j < rows.length && !rows[j].startsWith('```')) {
 			contentLines.push(rows[j])
 			j++
 		}
@@ -69,12 +65,12 @@ export default class MDCodeBlock extends MDElement {
 			return false // Missing closing ```
 		}
 
-		const content = contentLines.join("\n")
+		const content = contentLines.join('\n')
 
 		context.i = j + 1
 		return new MDCodeBlock({
 			language,
-			content
+			content,
 		})
 	}
 }

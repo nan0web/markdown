@@ -1,4 +1,4 @@
-import { ContainerObject } from "@nan0web/types"
+import { ContainerObject } from '@nan0web/types'
 
 /**
  * Base class for markdown elements.
@@ -11,15 +11,15 @@ import { ContainerObject } from "@nan0web/types"
  * @property {MDElement[]} [children]
  */
 export default class MDElement extends ContainerObject {
-	static TAG_MARKDOWN = ""
+	static TAG_MARKDOWN = ''
 	/** @type {string|Function} */
-	static defaultMdTag = ""
+	static defaultMdTag = ''
 	/** @type {string|Function} */
-	static defaultMdEnd = ""
+	static defaultMdEnd = ''
 	/** @type {string|Function} */
-	static defaultTag = ""
+	static defaultTag = ''
 	/** @type {string|Function} */
-	static defaultEnd = ""
+	static defaultEnd = ''
 
 	/** @type {string} */
 	content
@@ -38,12 +38,12 @@ export default class MDElement extends ContainerObject {
 	 * @param {MDElementProps} props
 	 */
 	constructor(props = {}) {
-		if ("string" === typeof props) {
+		if ('string' === typeof props) {
 			props = { content: props }
 		}
 		super(props)
 		const {
-			content = "",
+			content = '',
 			tag = /** @type {typeof MDElement} */ (this.constructor).defaultTag,
 			end = /** @type {typeof MDElement} */ (this.constructor).defaultEnd,
 			mdTag = /** @type {typeof MDElement} */ (this.constructor).defaultMdTag,
@@ -55,9 +55,9 @@ export default class MDElement extends ContainerObject {
 		this.end = end
 		this.mdTag = mdTag
 		this.mdEnd = mdEnd
-		children.map(child => {
+		children.map((child) => {
 			if (!(child instanceof MDElement)) {
-				throw new Error("Every child must be an instance of MDElement")
+				throw new Error('Every child must be an instance of MDElement')
 			}
 		})
 		this.children = children
@@ -102,11 +102,11 @@ export default class MDElement extends ContainerObject {
 	 * @returns {MDElement[]}
 	 */
 	flat() {
-		return super.flat().map(el => MDElement.from(el))
+		return super.flat().map((el) => MDElement.from(el))
 	}
 
 	toArray() {
-		return super.toArray().map(el => MDElement.from(el))
+		return super.toArray().map((el) => MDElement.from(el))
 	}
 
 	/**
@@ -117,7 +117,7 @@ export default class MDElement extends ContainerObject {
 	 * @returns {MDElement[]}
 	 */
 	filter(filter, recursively = false) {
-		return super.filter(filter, recursively).map(el => MDElement.from(el))
+		return super.filter(filter, recursively).map((el) => MDElement.from(el))
 	}
 
 	/**
@@ -151,7 +151,7 @@ export default class MDElement extends ContainerObject {
 	 */
 	add(element) {
 		if (!(element instanceof MDElement)) {
-			throw new TypeError("Only markdown elements can be added to markdown document")
+			throw new TypeError('Only markdown elements can be added to markdown document')
 		}
 		super.add(element)
 		return this
@@ -166,24 +166,50 @@ export default class MDElement extends ContainerObject {
 	 * @returns {string}
 	 */
 	toString(props = {}) {
-		const {
-			indent = -2,
-			tab = "  ",
-			format = ".md",
-		} = props
-		if (".html" === format) {
+		const { indent = -2, tab = '  ', format = '.md' } = props
+		if ('.html' === format) {
 			return this.toHTML(props)
 		}
-		if (".txt" === format) {
+		if ('.txt' === format) {
 			return this.toTEXT(props)
 		}
-		const mdTag = "function" === typeof this.mdTag ? this.mdTag : () => this.mdTag
-		const mdEnd = "function" === typeof this.mdEnd ? this.mdEnd : () => this.mdEnd
-		const contentLine = (typeof mdTag === "function" ? mdTag(this) : mdTag) + this.content + (typeof mdEnd === "function" ? mdEnd(this) : mdEnd)
-		const childrenLines = this.children.map(
-			child => child.toString({ indent: indent + tab.length, format })
+		const mdTag = 'function' === typeof this.mdTag ? this.mdTag : () => this.mdTag
+		const mdEnd = 'function' === typeof this.mdEnd ? this.mdEnd : () => this.mdEnd
+		const contentLine =
+			(typeof mdTag === 'function' ? mdTag(this) : mdTag) +
+			this.content +
+			(typeof mdEnd === 'function' ? mdEnd(this) : mdEnd)
+		const childrenLines = this.children.map((child) =>
+			child.toString({ indent: indent + tab.length, format }),
 		)
-		return [contentLine, ...childrenLines].filter(s => "" !== s).join("")
+		return [contentLine, ...childrenLines].filter((s) => '' !== s).join('')
+	}
+
+	/**
+	 * Process content for inline elements (links, code, etc.)
+	 * @param {string} text
+	 * @param {string} [format=".md"]
+	 * @returns {string}
+	 */
+	static processInline(text, format = '.md') {
+		if (!text) return ''
+		let processed = text
+
+		if ('.html' === format) {
+			// Code must come before links to avoid issues with backticks inside links
+			processed = processed.replace(/`([^`]*)`/g, '<code>$1</code>')
+			// Match bold **text** or __text__
+			processed = processed.replace(/\*\*([\s\S]+?)\*\*/g, '<strong>$1</strong>')
+			processed = processed.replace(/__([\s\S]+?)__/g, '<strong>$1</strong>')
+			// Match italic *text* or _text_
+			processed = processed.replace(/\*([\s\S]+?)\*/g, '<em>$1</em>')
+			processed = processed.replace(/_([\s\S]+?)_/g, '<em>$1</em>')
+			// Match strikethrough ~~text~~
+			processed = processed.replace(/~~([\s\S]+?)~~/g, '<del>$1</del>')
+			// Match [text](href)
+			processed = processed.replace(/\[(.*?)\]\((.*?)\)/g, '<a href="$2">$1</a>')
+		}
+		return processed
 	}
 
 	/**
@@ -193,15 +219,21 @@ export default class MDElement extends ContainerObject {
 	 * @returns {string}
 	 */
 	toHTML(props = {}) {
-		const {
-			indent = 0,
-		} = props
-		const indentStr = " ".repeat(indent)
-		const tag = "function" === typeof this.tag ? this.tag : () => this.tag
-		const end = "function" === typeof this.end ? this.end : () => this.end
-		const contentLine = indentStr + (typeof tag === "function" ? tag(this) : tag) + this.content + (typeof end === "function" ? end(this) : end)
-		const childrenLines = this.children.map(child => child.toHTML({ indent: indent + 2 }))
-		return [contentLine, ...childrenLines].join("\n")
+		const { indent = 0 } = props
+		const indentStr = ' '.repeat(indent)
+		const tag = 'function' === typeof this.tag ? this.tag : () => this.tag
+		const end = 'function' === typeof this.end ? this.end : () => this.end
+
+		const content = MDElement.processInline(this.content, '.html')
+
+		const childrenHTML = this.children.map((child) => child.toHTML({ indent: indent + 2 })).join('\n')
+
+		let output = indentStr + (typeof tag === 'function' ? tag(this) : tag)
+		if (content) output += content
+		if (childrenHTML) output += '\n' + childrenHTML + '\n' + indentStr
+		output += typeof end === 'function' ? end(this) : end
+
+		return output
 	}
 
 	/**
@@ -213,15 +245,11 @@ export default class MDElement extends ContainerObject {
 	 * @returns {string}
 	 */
 	toTEXT(props = {}) {
-		const {
-			indent = 0,
-			tag = "",
-			end = "",
-		} = props
-		const indentStr = " ".repeat(indent)
+		const { indent = 0, tag = '', end = '' } = props
+		const indentStr = ' '.repeat(indent)
 		const contentLine = indentStr + tag + this.content + end
-		const childrenLines = this.children.map(child => child.toHTML({ indent: indent + 2 }))
-		return [contentLine, ...childrenLines].join("\n")
+		const childrenLines = this.children.map((child) => child.toHTML({ indent: indent + 2 }))
+		return [contentLine, ...childrenLines].join('\n')
 	}
 
 	/**

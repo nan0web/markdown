@@ -1,6 +1,6 @@
 {
 	"name": "@nan0web/markdown",
-	"version": "1.0.2",
+	"version": "1.0.3",
 	"description": "Markdown parser for nan0web",
 	"main": "src/index.js",
 	"types": "types/index.d.ts",
@@ -22,17 +22,19 @@
 		"build": "tsc",
 		"clean": "rm -rf .cache/ && rm -rf dist/",
 		"clean:modules": "rm -rf node_modules",
-		"test": "node --test --test-timeout=9999 \"src/**/*.test.js\" | nan0test parse tap --fail",
+		"test": "node --test --test-timeout=9999 \"src/**/*.test.js\"",
 		"test:docs": "node --test src/README.md.js",
-		"test:release": "node --test \"releases/**/*.test.js\"",
+		"test:release": "node --test \"releases/**/*.spec.js\"",
 		"test:coverage": "node --experimental-test-coverage --test-coverage-include=\"src/**/*.js\" --test-coverage-exclude=\"src/**/*.test.js\" --test \"src/**/*.test.js\"",
 		"test:coverage:collect": "nan0test coverage",
 		"test:status": "nan0test status",
-		"test:all": "echo '```bash\n' > me.md && npm run test >> me.md 2>&1 && echo '```\n\n```bash\n` >> me.md && npm run build >> me.md 2>&1 && echo '```\n'",
+		"test:all": "npm run test && npm run build && npm run test:docs && npm run knip && npm run audit",
 		"release": "nan0release publish",
 		"precommit": "npm test",
 		"prepush": "npm test",
 		"prepare": "husky",
+		"knip": "knip --production",
+		"audit": "pnpm audit",
 		"play": "node play/main.js"
 	},
 	"keywords": [],
@@ -40,13 +42,15 @@
 	"license": "ISC",
 	"packageManager": "pnpm@10.11.0",
 	"devDependencies": {
-		"@nan0web/release": "^1.0.0",
-		"@nan0web/types": "^1.0.0",
-		"@nan0web/test": "^1.0.0",
-		"@nan0web/ui-cli": "^1.0.0",
-		"husky": "^9.1.7"
+		"@nan0web/release": "workspace:*",
+		"@nan0web/test": "workspace:*",
+		"@nan0web/types": "workspace:*",
+		"@nan0web/ui-cli": "workspace:*",
+		"@nan0web/log": "workspace:*",
+		"husky": "^9.1.7",
+		"knip": "^6.5.0"
 	},
 	"peerDependencies": {
-		"@nan0web/types": "^1.0.0"
+		"@nan0web/types": "workspace:*"
 	}
 }

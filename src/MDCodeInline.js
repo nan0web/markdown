@@ -1,17 +1,25 @@
-import MDElement from "./MDElement.js"
+import MDElement from './MDElement.js'
 
 /**
  * Inline code element.
  */
 export default class MDCodeInline extends MDElement {
 	/** @type {string} */
-	static get defaultTag() { return "<code>" }
+	static get defaultTag() {
+		return '<code>'
+	}
 	/** @type {string} */
-	static get defaultMdTag() { return "`" }
+	static get defaultMdTag() {
+		return '`'
+	}
 	/** @type {string} */
-	static get defaultMdEnd() { return "`" }
+	static get defaultMdEnd() {
+		return '`'
+	}
 	/** @type {string} */
-	static get defaultEnd() { return "</code>" }
+	static get defaultEnd() {
+		return '</code>'
+	}
 
 	/**
 	 * @param {string} text

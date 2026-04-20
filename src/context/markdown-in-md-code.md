@@ -1,5 +1,6 @@
 #### `./README.md`
-```md
+
+````md
 # NaN•MarkDown
 
 Markdown parser for nanoweb.
@@ -15,12 +16,13 @@ Markdown parser for nanoweb.
 ## Usage
 
 ```js
-import Markdown from "@nan0web/markdown"
+import Markdown from '@nan0web/markdown'
 
 const md = new Markdown()
-const elements = md.parse("# Hello World\n\nThis is a paragraph.")
+const elements = md.parse('# Hello World\n\nThis is a paragraph.')
 const html = md.stringify()
 ```
+````
 
 ## Extended Syntax
 

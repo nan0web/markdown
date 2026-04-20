@@ -1,13 +1,21 @@
-import MDElement from "./MDElement.js"
+import MDElement from './MDElement.js'
 
 /**
  * Image element.
  */
 export default class MDImage extends MDElement {
-	static get defaultTag() { return "<img" }
-	static get defaultMdTag() { return "!" }
-	static get defaultMdEnd() { return " " }
-	static get defaultEnd() { return ">" }
+	static get defaultTag() {
+		return '<img'
+	}
+	static get defaultMdTag() {
+		return '!'
+	}
+	static get defaultMdEnd() {
+		return ' '
+	}
+	static get defaultEnd() {
+		return '>'
+	}
 
 	/** @type {string} */
 	src
@@ -17,28 +25,21 @@ export default class MDImage extends MDElement {
 	 */
 	constructor(props = {}) {
 		super(props)
-		const {
-			src = ""
-		} = props
+		const { src = '' } = props
 		this.src = src
 	}
 
 	toString(props = {}) {
-		const {
-			indent = 0,
-			format = ".md",
-		} = props
-		if (".html" === format) {
+		const { indent = 0, format = '.md' } = props
+		if ('.html' === format) {
 			return this.toHTML(props)
 		}
-		return " ".repeat(indent) + `${this.mdTag}[${this.content}](${this.src})${this.mdEnd}`
+		return ' '.repeat(indent) + `${this.mdTag}[${this.content}](${this.src})${this.mdEnd}`
 	}
 
 	toHTML(props = {}) {
-		const {
-			indent = 0,
-		} = props
-		return " ".repeat(indent) + `${this.tag} src="${this.src}" alt="${this.content}"${this.end}`
+		const { indent = 0 } = props
+		return ' '.repeat(indent) + `${this.tag} src="${this.src}" alt="${this.content}"${this.end}`
 	}
 
 	static parse(text, context = {}) {
@@ -52,7 +53,7 @@ export default class MDImage extends MDElement {
 		i = i + match[0].length
 		return new MDImage({
 			content,
-			src
+			src,
 		})
 	}
 }

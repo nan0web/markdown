@@ -36,14 +36,14 @@ yarn add @nan0web/markdown
 
 ### Basic Parsing
 
-Parses Markdown text into an array of `MDElement` objects.
+Parses Markdown text into an array of `MDElement` objects. You can either pass the text directly into the constructor for immediate parsing, or use the `.parse()` method.
 
 How to parse Markdown text into elements?
 ```js
 import { Markdown } from "@nan0web/markdown"
-const md = new Markdown()
-const elements = md.parse("# Hello World\n\nThis is a paragraph.")
-console.info(elements.length) // ← 3 (heading, paragraph, space)
+// 1. Direct parsing via constructor
+const mdFast = new Markdown('# Fast Parse')
+console.info(mdFast.document.children.length) // ← 1 (heading)
 ```
 ### Stringify to HTML
 
@@ -53,7 +53,7 @@ How to convert parsed Markdown to HTML?
 ```js
 import { Markdown } from "@nan0web/markdown"
 const md = new Markdown()
-md.parse("# Title\n\nParagraph\n\n1. first\n2. second\n\n```js\ncode\n```\n\n")
+md.parse('# Title\n\nParagraph\n\n1. first\n2. second\n\n```js\ncode\n```\n\n')
 const html = md.stringify()
 console.info(html) // ← <h1>Title</h1>...
 ```
@@ -65,7 +65,7 @@ How to use an interceptor for custom HTML rendering?
 ```js
 import { Markdown } from "@nan0web/markdown"
 const md = new Markdown()
-md.parse("# Title")
+md.parse('# Title')
 const html = md.stringify(({ element }) => {
 	if (element instanceof MDHeading1) {
 		return `<h1 class="custom">${element.content}</h1>`
@@ -79,7 +79,7 @@ console.info(html) // ← <h1 class="custom">Title</h1>
 How to parse and stringify inline code in paragraphs?
 ```js
 import { Markdown } from "@nan0web/markdown"
-const input = "`DB.path.test.js` is a test suite from the base `DB` class."
+const input = '`DB.path.test.js` is a test suite from the base `DB` class.'
 const elements = Markdown.parse(input)
 const output = elements[0].toString()
 console.info(output) // ← "`DB.path.test.js` is a test suite from the base `DB` class.\n\n"
@@ -90,7 +90,7 @@ How to handle unordered lists?
 ```js
 import { Markdown } from "@nan0web/markdown"
 const md = new Markdown()
-const elements = md.parse("- item 1\n- item 2\n- item 3")
+const elements = md.parse('- item 1\n- item 2\n- item 3')
 console.info(elements.length) // ← 1
 console.info(elements[0] instanceof MDList) // ← true
 const list = elements[0].children
@@ -116,12 +116,13 @@ console.info(code instanceof MDCodeBlock) // ← true
 How to parse tables?
 ```js
 import { Markdown } from "@nan0web/markdown"
-const mdText = [
-	"| Header 1 | Header 2 | Header 3 |",
-	"|----------|----------|----------|",
-	"| Cell 1  | Cell 2  | Cell 3  |",
-	"| Cell 4  | Cell 5  | Cell 6  |",
-].join("\n") + "\n\n"
+const mdText =
+	[
+		'| Header 1 | Header 2 | Header 3 |',
+		'|----------|----------|----------|',
+		'| Cell 1  | Cell 2  | Cell 3  |',
+		'| Cell 4  | Cell 5  | Cell 6  |',
+	].join('\n') + '\n\n'
 const elements = Markdown.parse(mdText)
 console.info(elements.length) // ← 5 (table rows + space)
 const table = elements[0]
@@ -132,7 +133,7 @@ console.info(table instanceof MDTableRow) // ← true
 How to parse task lists?
 ```js
 import { Markdown } from "@nan0web/markdown"
-const input = "- [x] Write the press release\n- [ ] Update the website\n- [ ] Contact the media"
+const input = '- [x] Write the press release\n- [ ] Update the website\n- [ ] Contact the media'
 const elements = Markdown.parse(input)
 console.info(elements.length) // ← 1
 const taskList = elements[0]
@@ -142,7 +143,7 @@ console.info(taskList.children.length) // ← 3
 
 ### `Markdown`
 
-Main parser class.
+Main parser class. Accepts an optional `string` in its constructor for immediate parsing.
 
 * **Methods**
   * `parse(text: string): MDElement[]` – Parses Markdown into objects.
@@ -182,7 +183,7 @@ How to run playground script?
 git clone https://github.com/nan0web/markdown.git
 cd markdown
 npm install
-npm run playground
+npm run play
 ```
 
 ## Contributing

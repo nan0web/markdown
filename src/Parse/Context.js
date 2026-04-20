@@ -18,12 +18,7 @@ export default class ParseContext {
 	 * @param {Array} [input.skipped] The skipped rows
 	 */
 	constructor(input = {}) {
-		const {
-			i = 0,
-			j = 0,
-			rows = [],
-			skipped = [],
-		} = input
+		const { i = 0, j = 0, rows = [], skipped = [] } = input
 		this.i = Number(i)
 		this.j = Number(j)
 		this.rows = rows

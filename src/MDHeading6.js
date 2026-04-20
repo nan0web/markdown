@@ -1,13 +1,21 @@
-import MDHeading from "./MDHeading.js"
+import MDHeading from './MDHeading.js'
 
 /**
  * Heading6 element.
  */
 export default class MDHeading6 extends MDHeading {
-	static get defaultTag() { return "<h6>" }
-	static get defaultEnd() { return "</h6>" }
-	static get defaultMdTag() { return "###### " }
-	static get defaultMdEnd() { return "\n" }
+	static get defaultTag() {
+		return '<h6>'
+	}
+	static get defaultEnd() {
+		return '</h6>'
+	}
+	static get defaultMdTag() {
+		return '###### '
+	}
+	static get defaultMdEnd() {
+		return '\n'
+	}
 
 	/**
 	 * Parses a heading6 from markdown text.

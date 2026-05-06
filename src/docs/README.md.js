@@ -21,7 +21,7 @@ import {
 	MDTable,
 	MDTaskList,
 	MDTableRow,
-} from './index.js'
+} from '../index.js'
 
 const fs = new FS()
 let pkg
@@ -357,16 +357,27 @@ function testRender() {
 describe('README.md testing', testRender)
 
 describe('Rendering README.md', async () => {
-	let text = ''
 	const format = new Intl.NumberFormat('en-US').format
 	const parser = new DocsParser()
-	text = String(parser.decode(testRender))
-	await fs.saveDocument('README.md', text)
-	const dataset = DatasetParser.parse(text, pkg.name)
-	await fs.saveDocument('.datasets/README.dataset.jsonl', dataset)
+	const sourceCode = await fs.loadDocument('src/docs/README.md.js')
+	let text = String(parser.decode(sourceCode))
 
-	it(`document is rendered in README.md [${format(Buffer.byteLength(text))}b]`, async () => {
-		const docText = await fs.loadDocument('README.md')
-		assert.ok(String(docText.content || docText).includes('## License'))
+	it(`generates README.md and datasets [${format(Buffer.byteLength(text))}b]`, async () => {
+		// 1. Root README.md (with link to UK version)
+		const rootLangLink = '> 🇺🇦 [Читати українською](./docs/uk/README.md)\n\n'
+		await fs.saveDocument('README.md', rootLangLink + text)
+		
+		// 2. Clone for docs-site engine in docs/ (main English version)
+		const docsLangLink = '> 🇺🇦 [Читати українською](../uk/README.md)\n\n'
+		await fs.saveDocument('docs/README.md', docsLangLink + text)
+		
+		// 3. Clone for docs-site engine in docs/en/ (for explicit language selection)
+		await fs.saveDocument('docs/en/README.md', docsLangLink + text)
+
+		const dataset = DatasetParser.parse(text, pkg.name)
+		await fs.saveDocument('.datasets/README.dataset.jsonl', dataset)
+		
+		const saved = await fs.loadDocument('README.md')
+		assert.ok(String(saved.content || saved).includes('## License'))
 	})
 })

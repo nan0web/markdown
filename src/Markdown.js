@@ -178,7 +178,7 @@ export default class Markdown {
 			}
 			return el.toHTML({ indent: 0 })
 		})
-		return htmlParts.join('\n')
+		return htmlParts.filter(Boolean).join('\n')
 	}
 
 	/**
@@ -197,7 +197,7 @@ export default class Markdown {
 			}
 			return el.toHTML({ indent: 0 })
 		})
-		return htmlParts.join('\n')
+		return htmlParts.filter((p) => '' !== p).join('\n')
 	}
 
 	/**

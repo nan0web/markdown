@@ -32,7 +32,8 @@ export default class MDLink extends MDElement {
 
 	toHTML(props = {}) {
 		const { indent = 0 } = props
-		return ' '.repeat(indent) + `${this.tag} href="${this.href}">${this.content}${this.end}`
+		const content = MDElement.processInline(this.content, '.html')
+		return ' '.repeat(indent) + `${this.tag} href="${this.href}">${content}${this.end}`
 	}
 
 	toString(props = {}) {

@@ -4,54 +4,46 @@
  * @link https://www.markdownguide.org/cheat-sheet/
  */
 export default class Markdown {
-	static ELEMENTS: (typeof MDCodeBlock | typeof MDSpace)[]
-	/**
-	 * Parse markdown text into elements.
-	 * @param {string} text
-	 * @returns {MDElement[]} - Root element children
-	 */
-	static parse(text: string): MDElement[]
-	/**
-	 * @param {object} [input]
-	 * @param {MDElement} [input.document]
-	 */
-	constructor(
-		input?:
-			| {
-					document?: MDElement | undefined
-			  }
-			| undefined,
-	)
-	/** @type {MDElement} */
-	document: MDElement
-	/**
-	 * Parse markdown text into elements.
-	 * @param {string} text
-	 * @returns {MDElement[]} - Root element children
-	 */
-	parse(text: string): MDElement[]
-	/**
-	 * Stringify elements to HTML string.
-	 * @param {(element: InterceptorInput) => string | null} [interceptor]
-	 * @returns {string}
-	 */
-	stringify(interceptor?: ((element: InterceptorInput) => string | null) | undefined): string
-	/**
-	 * Stringify elements to HTML string.
-	 * @param {(element: InterceptorInput) => Promise<string | null>} [interceptor]
-	 * @returns {Promise<string>}
-	 */
-	asyncStringify(
-		interceptor?: ((element: InterceptorInput) => Promise<string | null>) | undefined,
-	): Promise<string>
-	/**
-	 * Convert element to HTML string.
-	 * @param {MDElement} el
-	 * @returns {string}
-	 */
-	elementToHTML(el: MDElement): string
+    static ELEMENTS: (typeof MDCodeInline | typeof MDCodeBlock | typeof MDSpace)[];
+    /**
+     * Parse markdown text into elements.
+     * @param {string} text
+     * @returns {MDElement[]} - Root element children
+     */
+    static parse(text: string): MDElement[];
+    /**
+     * @param {Partial<Markdown> | string} [input]
+     */
+    constructor(input?: Partial<Markdown> | string);
+    /** @type {MDElement} */
+    document: MDElement;
+    /**
+     * Parse markdown text into elements.
+     * @param {string} text
+     * @returns {MDElement[]} - Root element children
+     */
+    parse(text: string): MDElement[];
+    /**
+     * Stringify elements to HTML string.
+     * @param {(element: InterceptorInput) => string | null} [interceptor]
+     * @returns {string}
+     */
+    stringify(interceptor?: (element: InterceptorInput) => string | null): string;
+    /**
+     * Stringify elements to HTML string.
+     * @param {(element: InterceptorInput) => Promise<string | null>} [interceptor]
+     * @returns {Promise<string>}
+     */
+    asyncStringify(interceptor?: (element: InterceptorInput) => Promise<string | null>): Promise<string>;
+    /**
+     * Convert element to HTML string.
+     * @param {MDElement} el
+     * @returns {string}
+     */
+    elementToHTML(el: MDElement): string;
 }
-import MDElement from './MDElement.js'
-import InterceptorInput from './InterceptorInput.js'
-import MDCodeBlock from './MDCodeBlock.js'
-import MDSpace from './MDSpace.js'
+import MDElement from './MDElement.js';
+import InterceptorInput from './InterceptorInput.js';
+import MDCodeInline from './MDCodeInline.js';
+import MDCodeBlock from './MDCodeBlock.js';
+import MDSpace from './MDSpace.js';

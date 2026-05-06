@@ -21,6 +21,7 @@ import MDTableRow from './MDTableRow.js'
 import MDTableCell from './MDTableCell.js'
 import MDTaskList from './MDTaskList.js'
 import InterceptorInput from './InterceptorInput.js'
+import { ProvenDocsAuditor } from './inspect/index.js'
 
 export {
 	Markdown,
@@ -46,6 +47,7 @@ export {
 	MDTableCell,
 	MDTaskList,
 	InterceptorInput,
+	ProvenDocsAuditor,
 }
 
 export default Markdown

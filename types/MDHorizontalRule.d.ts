@@ -2,10 +2,10 @@
  * Horizontal rule element.
  */
 export default class MDHorizontalRule extends MDElement {
-	static parse(text: any): false | MDHorizontalRule
-	tag: string
-	mdTag: string
-	mdEnd: string
-	end: string
+    static get defaultTag(): string;
+    static get defaultMdTag(): string;
+    static get defaultMdEnd(): string;
+    static get defaultEnd(): string;
+    static parse(text: any): false | MDHorizontalRule;
 }
-import MDElement from './MDElement.js'
+import MDElement from './MDElement.js';

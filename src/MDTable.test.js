@@ -31,7 +31,7 @@ describe('MDTable', () => {
 		assert.strictEqual(result, false)
 	})
 
-	it.todo('should return false for invalid table (incorrect separator)', () => {
+	it('should return false for invalid table (incorrect separator)', () => {
 		const input = ['| Header 1 | Header 2 |', '|----------|', '| Cell 1   | Cell 2   |'].join('\n')
 		const result = MDTable.parse(input)
 		assert.strictEqual(result, false)

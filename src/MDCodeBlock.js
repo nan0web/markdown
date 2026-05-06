@@ -38,8 +38,6 @@ export default class MDCodeBlock extends MDElement {
 		this.content = String(content)
 	}
 
-
-
 	/**
 	 * Parses a code block from markdown text.
 	 * @param {string} text

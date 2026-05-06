@@ -28,11 +28,13 @@ Get legal support to collect unpaid rent in NYC. Trusted attorneys ready to assi
 `
 
 describe('ExtendedMarkdown parser', () => {
-	it.todo('should parse campaign and ad group with variables', () => {
+	it('should parse campaign and ad group with variables', () => {
 		const parser = new ExtendedMarkdown()
-		const elements = parser.parse(example)
-		// Updated expected count to 6 (campaign, adgroup, 3 code blocks, space)
-		assert.strictEqual(elements.length, 6)
+		const allElements = parser.parse(example)
+		// Filter out empty spaces to focus on logical elements
+		const elements = allElements.filter(el => el.constructor.name !== 'MDSpace')
+
+		assert.strictEqual(elements.length, 2) // Campaign, AdGroup
 		const campaign = elements[0]
 		assert.ok(campaign instanceof Campaign)
 		assert.strictEqual(campaign.name, 'Non Payment Rent NYC 2025')

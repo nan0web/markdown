@@ -41,17 +41,21 @@ export default class MDTable extends MDElement {
 
 		// Validate separator line (second line) contains proper table separator format
 		if (lines.length > 1) {
+			const headerCells = lines[0].trim().split('|').filter((c, i, a) => i > 0 && i < a.length - 1)
 			const separatorLine = lines[1].trim()
+			const separatorCells = separatorLine.split('|').filter((c, i, a) => i > 0 && i < a.length - 1)
+
+			if (headerCells.length !== separatorCells.length) {
+				return false
+			}
+
 			// Check if separator line has proper dash/colon format
 			if (!/^[\s|:-]+$/.test(separatorLine)) {
 				// Additional validation to ensure it's a proper separator
-				const isValidSeparator = separatorLine
-					.split('|')
-					.slice(1, -1)
-					.every((cell) => {
-						const trimmed = cell.trim()
-						return trimmed === '' || /^[-:]+$/.test(trimmed)
-					})
+				const isValidSeparator = separatorCells.every((cell) => {
+					const trimmed = cell.trim()
+					return trimmed === '' || /^[-:]+$/.test(trimmed)
+				})
 				if (!isValidSeparator) {
 					return false
 				}

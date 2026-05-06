@@ -13,6 +13,10 @@ export default class MDSpace extends MDElement {
 		this.content = content
 	}
 
+	toHTML() {
+		return ''
+	}
+
 	/**
 	 * @param {string} text
 	 * @param {{i?: number, rows?: string[]}} [context={}]

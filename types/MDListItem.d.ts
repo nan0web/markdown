@@ -2,10 +2,10 @@
  * List item element.
  */
 export default class MDListItem extends MDElement {
-	static parse(text: any): false | MDListItem
-	tag: string
-	end: string
-	mdTag: string
-	mdEnd: string
+    static get defaultTag(): string;
+    static get defaultEnd(): string;
+    static get defaultMdTag(): string;
+    static get defaultMdEnd(): string;
+    static parse(text: any): false | MDListItem;
 }
-import MDElement from './MDElement.js'
+import MDElement from './MDElement.js';

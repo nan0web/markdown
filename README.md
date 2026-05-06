@@ -1,3 +1,5 @@
+> 🇺🇦 [Читати українською](./docs/uk/README.md)
+
 # @nan0web/markdown
 
 <!-- %PACKAGE_STATUS% -->
